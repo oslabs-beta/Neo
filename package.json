@@ -14,10 +14,19 @@
   "contributes": {
     "commands": [
       {
-        "command": "neo.helloWorld",
-        "title": "Hello World"
+        "command": "checkSEO.command",
+        "title": "Check SEO Score"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == 'javascript' || resourceLangId == 'typescript' || resourceLangId == 'javascriptreact' || resourceLangId == 'typescriptreact' ",
+          "command": "checkSEO.command",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
