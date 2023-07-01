@@ -19,7 +19,7 @@ export default function Neo() {
     <>
       <div id="content">
         <h1>Neo Test</h1>
-        <input id="fileInput" type="file" onChange={ test } multiple/* multiple attr allows for multiple file upload */></input>
+        <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
       </div>
     </>
   )
