@@ -5,12 +5,18 @@
 body {
   background-color: #131314;
   /* margin: 0 15.5%; */
-  margin-top: 150px;
+  /* margin-top: 150px; */
   overflow-x: hidden;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 * {
   color: whitesmoke;
+  scrollbar-width: auto;
+  scrollbar-color: #c2c2c2 #131314;
 }
 
 .navline {
@@ -33,4 +39,26 @@ body {
   border-top: 1px solid white;
 }
 
-.home {}
+#content {
+  width: 69vw;
+  height: 69vh;
+  border: 1px solid white;
+  margin: 2em auto;
+}
+
+/* ===== Scrollbar CSS ===== */
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 16px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #131314;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #c2c2c2;
+  border-radius: 10px;
+  border: 1px inset #ffffff;
+}

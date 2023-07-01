@@ -3,7 +3,9 @@ import Link from "next/link";
 export default function Neo() {
   return (
     <>
-      <h1>Neo Test</h1>
+      <div id="content">
+        <h1>Neo Test</h1>
+      </div>
     </>
   )
 }

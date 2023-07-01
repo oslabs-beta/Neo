@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export default function Footer() {
   return (
-    <div className="footer">
+    <footer className="footer">
       <div>
         <Image src="/Neo-White.png" width={169} height={169} alt="Neo Logo" />
       </div>
@@ -17,6 +17,6 @@ export default function Footer() {
           <Image src="/github-logo.png" width={30} height={30} alt="GitHub Logo with a link" />
         </Link>
       </div>
-    </div>
+    </footer>
   )
 }
