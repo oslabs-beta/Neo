@@ -3,14 +3,34 @@ import Link from "next/link";
 
 export default function Neo() {
 
-  //tester function that triggers on any changes that occur in the input field
-  function test() {
-    //set variable equal to files array on file upload element
-    const upload: HTMLElement | Array<any> | null = document.getElementById('fileInput').files;
-    //if variable is not null and contains files
+  //FORM DATA CREATION FUNCTION
+  function createFormData(fileElement: HTMLElement) {
+    let files = Array.from(fileElement.files)
+    let formData = new FormData();
+    files.forEach((file: any) => {
+      formData.append('file', file);
+    })
+    return formData;
+  }
+
+  //FUNCTION TRIGGER ON ELEMENT CHANGE
+  async function test() {
+
+    //GET CONTENTS OF FILE LOAD
+    const upload: HTMLElement | Array<any> | null = document.getElementById('fileInput');
+
+    //IF FILES LOADED
     if(upload && upload.length !== 0) {
-      console.log('File uploaded: ', upload);
-    } else {
+      //test logs
+      console.log('File uploaded: ', upload.files);
+      console.log('File 1: ', upload.files['0']['name']);
+      console.log('type of object: ', Array.isArray(upload));
+      //Create form data from upload
+      const newFormData = createFormData(upload);
+    } 
+
+    //NO FILE LOADED
+    else {
       console.log('Nothing loaded');
     }
   };
