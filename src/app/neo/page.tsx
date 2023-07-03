@@ -35,11 +35,21 @@ export default function Neo() {
     }
   };
 
+  //TEST FOR GET REQUESTS TO API
+  async function test2() {
+    console.log('in test');
+    let response: any = await fetch('http://localhost:3000/api/fileUpload')
+    response = await response.json();
+    console.log('reponse from server: ', response);
+    return response;
+  }
+
   return (
     <>
       <div id="content">
         <h1>Neo Test</h1>
         <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
+        <button onClick={ test2 }>I am button, push me for test</button>
       </div>
     </>
   )
