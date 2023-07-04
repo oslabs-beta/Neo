@@ -1,5 +1,6 @@
 import Link from "next/link";
 'use client';
+import axios from 'axios';
 
 export default function Neo() {
 
@@ -15,41 +16,30 @@ export default function Neo() {
 
   //FUNCTION TRIGGER ON ELEMENT CHANGE
   async function test() {
-
-    //GET CONTENTS OF FILE LOAD
+    //Retreive uploaded files
     const upload: HTMLElement | Array<any> | null = document.getElementById('fileInput');
-
-    //IF FILES LOADED
+    //check if files loaded
     if(upload && upload.length !== 0) {
-      //test logs
-      console.log('File uploaded: ', upload.files);
-      console.log('File 1: ', upload.files['0']['name']);
-      console.log('type of object: ', Array.isArray(upload));
       //Create form data from upload
       const newFormData = createFormData(upload);
-    } 
-
-    //NO FILE LOADED
-    else {
-      console.log('Nothing loaded');
+      //send form data to server
+      const response = axios.post('http://localhost:3000/api/fileUpload', newFormData, {
+        headers: {
+          'Content-Type' : 'multipart/form-data'
+        }
+      })
+        .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
+      console.log('File saved to disk');
+    } else {
+      console.error('No file uploaded');
     }
   };
-
-  //TEST FOR GET REQUESTS TO API
-  async function test2() {
-    console.log('in test');
-    let response: any = await fetch('http://localhost:3000/api/fileUpload')
-    response = await response.json();
-    console.log('reponse from server: ', response);
-    return response;
-  }
 
   return (
     <>
       <div id="content">
         <h1>Neo Test</h1>
         <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
-        <button onClick={ test2 }>I am button, push me for test</button>
       </div>
     </>
   )
