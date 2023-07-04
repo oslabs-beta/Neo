@@ -14,7 +14,10 @@ export async function GET(request: Request) {
 
   console.log('url: ', url);
 
-  const browser: Browser = await puppeteer.launch({headless: false});
+  const browser: Browser = await puppeteer.launch({headless: true});
+  const page = await browser.newPage();
+  await page.goto(url);
+  const screenshot = await page.screenshot({ type: 'png' });
 
   setTimeout(() => browser.close(), 5000);
 
@@ -35,12 +38,10 @@ export async function GET(request: Request) {
   // const page = await browser.newPage();
   // await page.goto(url);
 
-  return NextResponse.json({
-    message: 'url afterwards',
-    url
-  }, {
-    status: 200
-  })
+  // return NextResponse.json(screenshot, {
+  //   status: 200
+  // })
+  return new Response(screenshot);
 } 
   // let browser: any;
 

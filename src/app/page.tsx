@@ -6,9 +6,10 @@ import axios from 'axios';
 // const puppeteer = require('puppeteer');
 
 export default function Home() {
+
   const handleClick = async () => {
     try {
-      const response = await axios.post('/api/puppeteer');
+      const response = await axios.get('/api/screenshot/?url=https://www.youtube.com');
       console.log(response.data); // Optional: Handle the response
     } catch (error) {
       console.log('Error requesting Puppeteer API:', error);
@@ -21,7 +22,7 @@ export default function Home() {
   //     const browser = await puppeteer.launch({ headless: false });
   //     const page = await browser.newPage();
   //     await page.goto('https://www.freecodecamp.org/');
-    
+
   //     // await browser.close();
   //     setTimeout(() => browser.close(), 5000);
   //   } catch (error) {
@@ -40,8 +41,8 @@ export default function Home() {
           Application
         </button>
         <button onClick={handleClick}>
-        Run Puppeteer
-      </button>
+          Run Puppeteer
+        </button>
       </div>
       <div>
         <Image src="/App-Preview.png" width={500} height={500} alt="Preview of NEO Dashboard" />
