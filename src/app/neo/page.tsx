@@ -7,6 +7,23 @@ export default function Neo() {
   //FORM DATA CREATION FUNCTION
   function createFormData(fileElement: HTMLElement) {
     let files = Array.from(fileElement.files)
+    // console.log('test', files[0]);
+    // type file = {
+    //   lastModified: number,
+    //   lastModifiedDate: object,
+    //   name: string,
+    //   size: number,
+    //   type: string,
+    //   webkitRelativePath: string,
+    // }
+    // const test = {}
+    // const properties = ['lastModified', 'lastModifiedDate', 'name', 'size', 'type', 'webkitRelativePath'];
+    // properties.forEach(key => {
+    //   test[key] = files[0][key];
+    // })
+
+    // console.log('new file: ', test);
+
     let formData = new FormData();
     files.forEach((file: any) => {
       formData.append('file', file);
@@ -19,28 +36,41 @@ export default function Neo() {
     //Retreive uploaded files
     const upload: HTMLElement | Array<any> | null = document.getElementById('fileInput');
     //check if files loaded
-    if(upload && upload.length !== 0) {
+    if (upload && upload.length !== 0) {
       //Create form data from upload
       const newFormData = createFormData(upload);
+      console.log('entry check', newFormData.getAll('file'))
       //send form data to server
-      const response = axios.post('http://localhost:3000/api/fileUpload', newFormData, {
+      const response = await fetch('api/fileUpload', {
+        method: 'POST',
+        body: newFormData,
         headers: {
-          'Content-Type' : 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
-        .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
       console.log('File saved to disk');
-    } else {
-      console.error('No file uploaded');
-    }
-  };
 
-  return (
-    <>
-      <div id="content">
-        <h1>Neo Test</h1>
-        <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
-      </div>
-    </>
-  )
+    /*
+    const response = axios.post('http://localhost:3000/api/fileUpload', newFormData, {
+      headers: {
+        'Content-Type' : 'multipart/form-data'
+      }
+    })
+      .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
+    console.log('File saved to disk');
+    */
+  } else {
+    console.error('No file uploaded');
+  }
+};
+
+return (
+  <>
+    <div id="content">
+      <h1>Neo Test</h1>
+      <input id="fileInput" type="file" onChange={test} webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
+    </div>
+  </>
+)
 }
+
