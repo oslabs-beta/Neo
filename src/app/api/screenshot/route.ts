@@ -19,6 +19,22 @@ export async function GET(request: NextRequest) {
   await page.goto(url as string);
   const screenshot = await page.screenshot({ type: 'png' });
 
+  // const metrics = await page.metrics();
+  // console.log(metrics);
+
+  const performanceMetrics = await page.evaluate(() => {
+    const entries = performance.getEntries();
+
+    return entries.map(entry => ({
+      name: entry.name,
+      startTime: entry.startTime,
+      duration: entry.duration
+    }));
+  });
+
+  console.log('Performance Metrics:');
+  console.log(performanceMetrics);
+
   setTimeout(() => browser.close(), 5000);
 
   // open(url);
