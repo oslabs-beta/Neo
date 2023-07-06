@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex justify-around items-center" id="content">
+    <div className="flex justify-around items-center text-white" id="content">
       <div>
         <p className="text-3xl">Next</p>
         <p className="text-3xl">Engine</p>
@@ -26,6 +26,7 @@ export default function Home() {
           src="/App-Preview.png"
           width={500}
           height={500}
+          priority={true}
           alt="Preview of NEO Dashboard"
         />
       </div>

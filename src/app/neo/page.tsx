@@ -1,7 +1,9 @@
-'use client';
+// 'use client';
 import App from "./app";
+// import React, { useState } from 'react';
 
 export default function Neo() {
+  // const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
 
   // //FORM DATA CREATION FUNCTION
   // function createFormData(fileElement: any) {
@@ -32,12 +34,58 @@ export default function Neo() {
   // };
 
 
+  //FILE ZIP FUNCTION TO RUN ONCHANGE
+  // function createZip () {
+  //   const filesInput: any = document.getElementById('fileInput');
+  //   const files: any = filesInput.files
+  //   const zip = new JSZip()
+
+
+
+
 
   return (
     <div>
       <App />
     </div>
   );
+
+  
+
+  // type FileItem = {
+  //   name: string;
+  //   type: 'file' | 'folder';
+  //   size: number;
+  //   lastModified: number;
+  //   files?: FileItem[];
+  // };
+
+//   function FileItem({
+//     item, onClick,
+//   }: {
+//     item: FileItem[];
+//     onClick: (folderName: string) => void;
+//   }) {
+//     const handleClick = (folderName: string) => {
+//       onClick(folderName);
+//     };
+
+//     return (
+//       <ul>
+//         {item.map((file) => (
+//           <li key={file.name}>
+//             {file.type === 'file' ? (
+//               <span>{'__' + file.name}</span>
+//             ) : (
+//               <strong onClick={() => handleClick(file.name)}>{'/' + file.name}</strong>
+//           )}
+//           {file.files && <FileItem item={file.files} onClick={onClick} />}
+//         </li>
+//       ))}
+//     </ul>
+//   );
+// }
+// }
 }
 
 //ORIGINAL TEST CODE
@@ -50,9 +98,9 @@ export default function Neo() {
 </form>
 */
 
-{
+// {
   /* <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple></input> */
-}
+// }
 
 //NOTES
 /*
@@ -63,4 +111,3 @@ New modules
 1. axios - for streamlining server requests
 2. jszip - for zipping uploads
 */
-
