@@ -7,6 +7,11 @@ body {
   /* margin: 0 15.5%; */
   /* margin-top: 150px; */
   overflow-x: hidden;
+  background: linear-gradient(
+    180deg,
+    #131314 20%,
+    rgba(156, 169, 214, 0.747) 300%
+  );
 }
 
 a:hover {
@@ -34,16 +39,33 @@ a:hover {
   justify-content: space-around;
   width: 100vw;
   height: 15vh;
-  position: absolute;
-  bottom: -15vh;
+  /* position: absolute;
+  bottom: -15vh; */
   border-top: 1px solid white;
 }
 
 #content {
   width: 69vw;
-  height: 69vh;
-  border: 1px solid white;
+  min-height: 80vh;
+  /* border: 1px solid white; */
   margin: 2em auto;
+}
+
+#app-header {
+  padding: 2%;
+}
+
+#app-header_line {
+  margin: 0 auto;
+  width: 65vw;
+  height: 10px;
+}
+
+#app-body_line {
+  margin: 0 1%;
+  width: 10px;
+  height: 65vh;
+  border-radius: 0 0 10px 10px;
 }
 
 /* ===== Scrollbar CSS ===== */
