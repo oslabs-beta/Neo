@@ -35,21 +35,21 @@ export default function Neo() {
 
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
-  // function createZip () {
-  //   const filesInput: any = document.getElementById('fileInput');
-  //   const files: any = filesInput.files
-  //   const zip = new JSZip()
-  //   for(const file of files) {
-  //     console.log(file);
-  //   }
-  // }
+  function createZip () {
+    const filesInput: any = document.getElementById('fileInput');
+    const files: any = filesInput.files
+    const zip = new JSZip()
+    for(const file of files) {
+      console.log(file);
+    }
+  }
 
   return (
     <>
     <div id="content" className="bg-gray-300 rounded-3xl">
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
-        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} >Upload File</input>
+        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
