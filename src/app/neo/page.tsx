@@ -1,5 +1,6 @@
 import Link from 'next/link';
-// ('use client');
+import DoughnutChart from './donut';
+import App from './app';
 
 export default function Neo() {
   // //tester function that triggers on any changes that occur in the input field
@@ -15,33 +16,9 @@ export default function Neo() {
   // };
 
   return (
-    <>
-      <div id="content" className="bg-gray-300 rounded-3xl">
-        <div id="app-header" className="flex justify-between">
-          <p className="text-3xl text-black ml-10">Dashboard</p>
-          <button className="bg-black rounded-md p-2 mr-10">Upload File</button>
-        </div>
-        <div id="app-header_line" className="bg-black rounded-xl"></div>
-        <div id="app-body" className="flex">
-          <div id="app-sidebar" className="flex flex-col ml-20 text-black">
-            File.js
-            <button className="bg-black rounded-md p-2 text-white">
-              Add Folder
-            </button>
-          </div>
-          <div id="app-body_line" className="bg-black"></div>
-          <div
-            id="app-main"
-            className="flex flex-col justify-center text-black"
-          >
-            File.js
-            <button className="bg-black rounded-md p-2 text-white">
-              Generate
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    <div>
+      <App />
+    </div>
   );
 }
 
