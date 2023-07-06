@@ -2,30 +2,35 @@ import Link from "next/link";
 'use client';
 import axios from 'axios';
 import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export default function Neo() {
 
-  // //FORM DATA CREATION FUNCTION
+  /*FORM DATA CREATION FUNCTION*/
   // function createFormData(fileElement: any) {
   //   let files: any[] = Array.from(fileElement.files)
   //   let formData = new FormData();
+  //   const pathing: string[] = [];
   //   files.forEach((file: any) => {
   //     formData.append('file', file);
+  //     pathing.push(file.webkitRelativePath);
   //   })
-  //   return formData;
+  //   console.log('formData before return', formData)
+  //   return [formData, pathing];
   // }
 
-  // //FORM DATA FUNCTION ON ELEMENT CHANGE
-  // async function test() {
+  /*FORM DATA FUNCTION ON ELEMENT CHANGE*/
+  // async function test(event: any) {
+  //   console.log('uploaded filed', event.target.files);
   //   //Retreive uploaded files
   //   const upload: any = document.getElementById('fileInput');
-  //   console.log('test', upload)
   //   //check if files loaded
   //   if (upload && upload.length !== 0) {
   //     //Create form data from upload
-  //     const newFormData = createFormData(upload);
-  //     // Make axios post request sending form data with uploaded files
-  //     const response = axios.post('http://localhost:3000/api/fileUpload', newFormData)
+  //     const [formData, pathing] = createFormData(upload);
+  //     console.log('testing the objects', formData, pathing)
+  //     // Make axios post request sending form data
+  //     await axios.post('http://localhost:3000/api/fileUpload', formData)
   //       .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
   //     console.log('Post request complete'); 
   //   } else {
@@ -34,14 +39,25 @@ export default function Neo() {
   // };
 
 
-  //FILE ZIP FUNCTION TO RUN ONCHANGE
-  function createZip () {
-    const filesInput: any = document.getElementById('fileInput');
-    const files: any = filesInput.files
+  /*FILE ZIP FUNCTION TO RUN ONCHANGE*/
+  async function createZip (event: any) {
+    const files: any = event.target.files
     const zip = new JSZip()
+    //packet all the files
     for(const file of files) {
       console.log(file);
+      zip.file(file.name, file, { createFolders: true });
     }
+    //convert to blob
+    const blobZip = await zip.generateAsync({type: "blob"})
+    console.log('check blobZip: ', blobZip);
+    //append to file
+    const blobForm = new FormData()
+    blobForm.append('zip', blobZip, "Blob")
+    console.log('check blobForm: ', blobForm.get('zip'));
+    //send file to server
+    await axios.post('http://localhost:3000/api/fileUpload', blobZip)
+      .catch((err: Error) => console.error(err));
   }
 
   return (
@@ -49,7 +65,7 @@ export default function Neo() {
     <div id="content" className="bg-gray-300 rounded-3xl">
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
-        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
+        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={ createZip } ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">

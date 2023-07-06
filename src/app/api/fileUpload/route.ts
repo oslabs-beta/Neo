@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-import multer from 'multer';
 const path = require('Path');
 import { createEdgeRouter } from "next-connect";
-
-//DEFINE MULTER STORAGE
-// const upload = multer({ dest: './uploads' });
+import fs from 'fs';
 
 // disable nextjs bodyparser
   // Used to allow form parsing from apps like formidable
@@ -17,36 +14,47 @@ export const config = {
 };
 
 //SETUP FOR NEXT-CONNECT ROUTER
-// interface RequestContext {
-//   params: {
-//     id: string;
-//   };
-// }
+interface RequestContext {
+  params: {
+    id: string;
+  };
+}
 
 //NEXT-CONNECT ROUTER
-// const router = createEdgeRouter<NextRequest, RequestContext>();
+const router = createEdgeRouter<NextRequest, RequestContext>();
 
-// router
-//   .use() 
+router
+  /* POST for Form Data */
+  // .post(async(req, event, next) => {
+  //   const data = await req.formData();
+  //   return NextResponse
+  // }) 
 
-// export async function POST(request: NextRequest, ctx: RequestContext) {
-//   return router.run(request, ctx);
-// }
+  /* POST for Zip Files */
+  .post(async(req, event, next) => {
+    const blobZip = await req.blob()
+    const fileBuffer: any = await blobZip.arrayBuffer()
+    const data = await new DataView(fileBuffer);
+    console.log('test run', data)
+    fs.writeFileSync('files.zip', data)
+
+    return NextResponse
+  }) 
+
+export async function POST(request: NextRequest, ctx: RequestContext) {
+  return router.run(request, ctx);
+}
 
 //BASE NEXTJS13 ROUTER
 //POST request: Write a file that was sent in the request
-export async function POST( req: NextRequest | any, res: NextResponse | any) {
-  //TESTING MULTER FUNCTIONALITY
-  // upload(req, res, err => {
-  //   if(err instanceof multer.MulterError) {
-  //     console.error('an error occurred with Multer: ', err)
-  //   } else if (err) {
-  //     console.error('an error occurred during file upload: ', err)
-  //   }
-  //   console.log('exiting multer function');
-  // })
-  return NextResponse.json("Return from post request");
-}
+// export async function POST( req: NextRequest | any, res: NextResponse | any) {
+//   fs.writeFile('src/app/api/fileUpload/upload/text.txt', 'hi', (err) => {
+//     console.log('an error occurred', err)
+//   })
+//   const data = await req.formData();
+//   console.log('test', data.keys());
+//   return NextResponse.json("Return from post request");
+// }
 
 //NOTES
 /*
