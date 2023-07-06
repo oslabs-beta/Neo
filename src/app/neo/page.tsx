@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { VictoryPie } from 'victory';
 // ('use client');
 
 export default function Neo() {
@@ -36,13 +35,6 @@ export default function Neo() {
             className="flex flex-col justify-center text-black"
           >
             File.js
-            <VictoryPie
-              data={[
-                { x: 'Green', y: 70 },
-                { x: 'White', y: 30 },
-              ]}
-              colorScale={['green', 'white']}
-            />
             <button className="bg-black rounded-md p-2 text-white">
               Generate
             </button>
