@@ -9,8 +9,7 @@ export default function Contact() {
     'Donald Twiford',
     'Benson Zhen',
   ];
-  
-  
+
   // const pfps: string[] = [
   //   'https://media.licdn.com/dms/image/C5603AQEzwiruaKNpXg/profile-displayphoto-shrink_400_400/0/1556665090299?e=1694044800&v=beta&t=RFpME37vVXJoUvrX4Y5rr_l8Nv92KRn9fzGolGphW5I',
   //   'https://media.licdn.com/dms/image/D5603AQEpzbsGcibFlQ/profile-displayphoto-shrink_400_400/0/1685062093155?e=1694044800&v=beta&t=gcv99cCJBJR0KIFmNOB-U-W-01gnNwRvqm1s-xYjCLs',
@@ -28,15 +27,17 @@ export default function Contact() {
   ];
 
   // access api once the branches are merged and the folder exists
-  async function getPFPs (person: string, url: string) : Promise<string> {
-    const response = await fetch(`/api/getPFP?person=${person}?url=${url}`)
+  async function getPFPs(person: string, url: string): Promise<string> {
+    const response = await fetch(`/api/getPFP?person=${person}?url=${url}`);
     const data = await response.json();
-    return data
+    return data;
   }
 
-  const pfps: Promise<string>[] = people.map((person, idx) => getPFPs(person, linkedinUrls[idx]))
+  const pfps: Promise<string>[] = people.map((person, idx) =>
+    getPFPs(person, linkedinUrls[idx])
+  );
 
-    /* 
+  /* 
 
   in a route handler called getPFP
   

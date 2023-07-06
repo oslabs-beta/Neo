@@ -4,7 +4,7 @@ import Image from 'next/image';
 type cardProps = {
   name: string;
   key: number;
-  pfp: Promise<string>;
+  pfp: string;
   linkedin: string;
   github: string;
 };
