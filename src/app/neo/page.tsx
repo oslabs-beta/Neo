@@ -1,7 +1,5 @@
-import Link from "next/link";
 'use client';
-import axios from 'axios';
-import JSZip from "jszip";
+import App from "./app";
 import React, { useState } from 'react';
 
 export default function Neo() {
@@ -93,40 +91,9 @@ export default function Neo() {
 
 
   return (
-    <>
-    <div id="content" className="bg-gray-300 rounded-3xl">
-      <div id="app-header" className="flex justify-between">
-        <p className="text-3xl text-black ml-10">Dashboard</p>
-        <input 
-          className="bg-black rounded-md p-2 mr-10 text-white" 
-          id="fileInput" 
-          type="file" 
-          name="directory" 
-          webkitdirectory="true" 
-          onChange={createZip} 
-        ></input>
-      </div>
-      <div id="app-header_line" className="bg-black rounded-xl"></div>
-      <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-20 text-black">
-          {fileStructure && <FileItem item={fileStructure} />}
-          {/* <button className="bg-black rounded-md p-2 text-white">
-            Add Folder
-          </button> */}
-        </div>
-        <div id="app-body_line" className="bg-black"></div>
-        <div
-          id="app-main"
-          className="flex flex-col justify-center text-black"
-        >
-
-          <button className="bg-black rounded-md p-2 text-white">
-            Generate
-          </button>
-        </div>
-      </div>
+    <div>
+      <App />
     </div>
-    </>
   );
 
   type FileItem = {
@@ -161,6 +128,40 @@ export default function Neo() {
       ))}
     </ul>
   );
+
+  type FileItem = {
+    name: string;
+    type: 'file' | 'folder';
+    size: number;
+    lastModified: number;
+    files?: FileItem[];
+  };
+
+  function FileItem({
+    item, onClick,
+  }: {
+    item: FileItem[];
+    onClick: (folderName: string) => void;
+  }) {
+    const handleClick = (folderName: string) => {
+      onClick(folderName);
+    };
+
+    return (
+      <ul>
+        {item.map((file) => (
+          <li key={file.name}>
+            {file.type === 'file' ? (
+              <span>{'__' + file.name}</span>
+            ) : (
+              <strong onClick={() => handleClick(file.name)}>{'/' + file.name}</strong>
+          )}
+          {file.files && <FileItem item={file.files} onClick={onClick} />}
+        </li>
+      ))}
+    </ul>
+  );
+}
 }
 }
 

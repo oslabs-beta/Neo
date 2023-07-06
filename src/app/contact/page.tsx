@@ -26,44 +26,6 @@ export default function Contact() {
     'https://www.linkedin.com/in/bensonzhen/',
   ];
 
-  // access api once the branches are merged and the folder exists
-  async function getPFPs(person: string, url: string): Promise<string> {
-    const response = await fetch(`/api/getPFP?person=${person}?url=${url}`);
-    const data = await response.json();
-    return data;
-  }
-
-  // const pfps: Promise<string>[] = people.map((person, idx) =>
-  //   getPFPs(person, linkedinUrls[idx])
-  // );
-
-  /* 
-
-  in a route handler called getPFP
-  
-  export async function GET(request: NextRequest) => {
-  
-    console.log('request')
-
-    const { searchParams } = request.nextUrl;
-    const url: string | null = searchParams.get('url');
-    const person: string | null = searchParams.get('person');
-
-    const browser: Browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-    await page.goto(url as string);
-
-    const image = await page.waitForSelector(`[title = '${person}']`)
-    const imageURL = image.src;
-
-    await image.dispose();
-    await browser.close();
-
-    return imageURL;
-  }
-
-  */
-
   const githubUrls: string[] = [
     'https://github.com/tomtnguyen88',
     'https://github.com/slip4k',
