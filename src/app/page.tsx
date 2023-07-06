@@ -26,6 +26,7 @@ export default function Home() {
           src="/App-Preview.png"
           width={500}
           height={500}
+          priority={true}
           alt="Preview of NEO Dashboard"
         />
       </div>
