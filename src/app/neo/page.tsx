@@ -1,7 +1,5 @@
-import Link from "next/link";
 'use client';
-import axios from 'axios';
-import JSZip from "jszip";
+import App from "./app";
 
 export default function Neo() {
 
@@ -34,15 +32,6 @@ export default function Neo() {
   // };
 
 
-  //FILE ZIP FUNCTION TO RUN ONCHANGE
-  function createZip () {
-    const filesInput: any = document.getElementById('fileInput');
-    const files: any = filesInput.files
-    const zip = new JSZip()
-    for(const file of files) {
-      console.log(file);
-    }
-  }
 
   return (
     <div>
