@@ -15,19 +15,6 @@ export default function Home() {
       console.log('Error requesting Puppeteer API:', error);
     }
   };
-  
-  // const handleClick = async (e) => {
-  //   try {
-  //     const browser = await puppeteer.launch({ headless: false });
-  //     const page = await browser.newPage();
-  //     await page.goto('https://www.freecodecamp.org/');
-
-  //     // await browser.close();
-  //     setTimeout(() => browser.close(), 5000);
-  //   } catch (error) {
-  //     console.log('error is', error)
-  //   }
-  // }
 
   return (
     <div className='flex justify-around items-center' id="content">
@@ -39,8 +26,8 @@ export default function Home() {
           <Image className='mr-1' src="/play-button.png" width={20} height={20} alt="Play button Icon for App button" />
           Application
         </button>
-        <button onClick={handleClick}>
-          Run Puppeteer
+        <button className='bg-slate-400 text-black w-30 flex flex-row gap-1 justify-between items-center py-2 px-3 rounded-full' onClick={handleClick}>
+          Run Puppeteer Screenshot
         </button>
       </div>
       <div>
