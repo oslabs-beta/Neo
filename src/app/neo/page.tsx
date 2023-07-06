@@ -1,11 +1,15 @@
-import Link from "next/link";
-'use client';
-import axios from 'axios';
-import JSZip from "jszip";
+// 'use client';
+import App from "./app";
+// import React, { useState } from 'react';
+// import Link from "next/link";
+// 'use client';
+// import axios from 'axios';
+// import JSZip from "jszip";
 
 export default function Neo() {
+  // const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
 
-  /*FILE ZIP FUNCTION TO RUN ONCHANGE*/
+  //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
     const files: any = event.target.files
     const zip = new JSZip()
@@ -24,33 +28,36 @@ export default function Neo() {
   }
 
   return (
-    <>
-    <div id="content" className="bg-gray-300 rounded-3xl">
-      <div id="app-header" className="flex justify-between">
-        <p className="text-3xl text-black ml-10">Dashboard</p>
-        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={ createZip } ></input>
-      </div>
-      <div id="app-header_line" className="bg-black rounded-xl"></div>
-      <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-20 text-black">
-          File.js
-          <button className="bg-black rounded-md p-2 text-white">
-            Add Folder
-          </button>
-        </div>
-        <div id="app-body_line" className="bg-black"></div>
-        <div
-          id="app-main"
-          className="flex flex-col justify-center text-black"
-        >
-          File.js
-          <button className="bg-black rounded-md p-2 text-white">
-            Generate
-          </button>
-        </div>
-      </div>
+    <div>
+      <App />
     </div>
-    </>
   );
-};
+    // <>
+    // <div id="content" className="bg-gray-300 rounded-3xl">
+    //   <div id="app-header" className="flex justify-between">
+    //     <p className="text-3xl text-black ml-10">Dashboard</p>
+    //     <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
+    //   </div>
+    //   <div id="app-header_line" className="bg-black rounded-xl"></div>
+    //   <div id="app-body" className="flex">
+    //     <div id="app-sidebar" className="flex flex-col ml-20 text-black">
+    //       File.js
+    //       <button className="bg-black rounded-md p-2 text-white">
+    //         Add Folder
+    //       </button>
+    //     </div>
+    //     <div id="app-body_line" className="bg-black"></div>
+    //     <div
+    //       id="app-main"
+    //       className="flex flex-col justify-center text-black"
+    //     >
+    //       File.js
+    //       <button className="bg-black rounded-md p-2 text-white">
+    //         Generate
+    //       </button>
+    //     </div>
+    //   </div>
+    // </div>
+    // </>
+}
 
