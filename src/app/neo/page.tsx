@@ -46,15 +46,47 @@ export default function Neo() {
 
   return (
     <>
-      <div id="content">
-        <h1>Neo Test</h1>
-        <form method="POST" action="/api/fileUpload" encType="multipart/form-data">
-          <input id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
-          <input type="submit"></input>
-        </form>
+    <div id="content" className="bg-gray-300 rounded-3xl">
+      <div id="app-header" className="flex justify-between">
+        <p className="text-3xl text-black ml-10">Dashboard</p>
+        <input className="bg-black rounded-md p-2 mr-10" id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} >Upload File</input>
       </div>
+      <div id="app-header_line" className="bg-black rounded-xl"></div>
+      <div id="app-body" className="flex">
+        <div id="app-sidebar" className="flex flex-col ml-20 text-black">
+          File.js
+          <button className="bg-black rounded-md p-2 text-white">
+            Add Folder
+          </button>
+        </div>
+        <div id="app-body_line" className="bg-black"></div>
+        <div
+          id="app-main"
+          className="flex flex-col justify-center text-black"
+        >
+          File.js
+          <button className="bg-black rounded-md p-2 text-white">
+            Generate
+          </button>
+        </div>
+      </div>
+    </div>
     </>
-  )
+  );
+}
+
+//ORIGINAL TEST CODE
+/*
+<div id="content">
+<h1>Neo Test</h1>
+<form method="POST" action="/api/fileUpload" encType="multipart/form-data">
+  <input id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
+  <input type="submit"></input>
+</form>
+*/
+
+{
+  /* <input id="fileInput" type="file" onChange={ test } webkitdirectory="true" multiple></input> */
 }
 
 //NOTES
