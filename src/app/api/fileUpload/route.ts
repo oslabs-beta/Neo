@@ -3,6 +3,8 @@ import { NextRequest } from 'next/server'
 const path = require('Path');
 import { createEdgeRouter } from "next-connect";
 import fs from 'fs';
+import decompress from 'decompress';
+import * as fsX from 'fs-extra';
 
 // disable nextjs bodyparser
   // Used to allow form parsing from apps like formidable
@@ -30,15 +32,22 @@ router
   //   return NextResponse
   // }) 
 
+  //FILE CLEANUP on post
+  .use(async(req, event, next) => {
+      fsX.emptyDirSync('./test/zip');
+      fsX.emptyDirSync('./test/unzip');
+    return next()
+  })
+
   /* POST for Zip Files */
   .post(async(req, event, next) => {
     const blobZip = await req.blob()
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = await new DataView(fileBuffer);
     console.log('test run', data)
-    fs.writeFileSync('files.zip', data)
-
-    return NextResponse
+    fs.writeFileSync('test/zip/files.zip', data);
+    await decompress('test/zip/files.zip', 'test/unzip');
+    return NextResponse.json('Files successfully loaded');
   }) 
 
 export async function POST(request: NextRequest, ctx: RequestContext) {

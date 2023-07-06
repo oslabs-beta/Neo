@@ -51,12 +51,9 @@ export default function Neo() {
     //convert to blob
     const blobZip = await zip.generateAsync({type: "blob"})
     console.log('check blobZip: ', blobZip);
-    //append to file
-    const blobForm = new FormData()
-    blobForm.append('zip', blobZip, "Blob")
-    console.log('check blobForm: ', blobForm.get('zip'));
-    //send file to server
+    //send blob to server
     await axios.post('http://localhost:3000/api/fileUpload', blobZip)
+      .then(res =>  console.log(res))
       .catch((err: Error) => console.error(err));
   }
 
