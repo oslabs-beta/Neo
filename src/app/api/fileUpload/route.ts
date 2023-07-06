@@ -26,12 +26,6 @@ interface RequestContext {
 const router = createEdgeRouter<NextRequest, RequestContext>();
 
 router
-  /* POST for Form Data */
-  // .post(async(req, event, next) => {
-  //   const data = await req.formData();
-  //   return NextResponse
-  // }) 
-
   //FILE CLEANUP on post
   .use(async(req, event, next) => {
       fsX.emptyDirSync('./test/zip');
@@ -53,22 +47,3 @@ router
 export async function POST(request: NextRequest, ctx: RequestContext) {
   return router.run(request, ctx);
 }
-
-//BASE NEXTJS13 ROUTER
-//POST request: Write a file that was sent in the request
-// export async function POST( req: NextRequest | any, res: NextResponse | any) {
-//   fs.writeFile('src/app/api/fileUpload/upload/text.txt', 'hi', (err) => {
-//     console.log('an error occurred', err)
-//   })
-//   const data = await req.formData();
-//   console.log('test', data.keys());
-//   return NextResponse.json("Return from post request");
-// }
-
-//NOTES
-/*
-New modules on this page
-1. Multer - for writing directories to application
-2. Next-connect - for creating a more expresslike server
-3. Path - for merging pathing
-*/
