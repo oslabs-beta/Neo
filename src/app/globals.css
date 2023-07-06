@@ -19,7 +19,7 @@ a:hover {
 }
 
 * {
-  color: whitesmoke;
+  /* color: whitesmoke; */
   scrollbar-width: auto;
   scrollbar-color: #c2c2c2 #131314;
 }
@@ -33,6 +33,7 @@ a:hover {
 }
 
 .footer {
+  color: whitesmoke;
   /* border: 1px solid blue; */
   display: flex;
   align-items: center;
