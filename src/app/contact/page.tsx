@@ -11,11 +11,11 @@ export default function Contact() {
   ];
 
   const pfps: string[] = [
-  //   'https://media.licdn.com/dms/image/C5603AQEzwiruaKNpXg/profile-displayphoto-shrink_400_400/0/1556665090299?e=1694044800&v=beta&t=RFpME37vVXJoUvrX4Y5rr_l8Nv92KRn9fzGolGphW5I',
-  //   'https://media.licdn.com/dms/image/D5603AQEpzbsGcibFlQ/profile-displayphoto-shrink_400_400/0/1685062093155?e=1694044800&v=beta&t=gcv99cCJBJR0KIFmNOB-U-W-01gnNwRvqm1s-xYjCLs',
-  //   'https://media.licdn.com/dms/image/C5603AQF5aVV5RPoSow/profile-displayphoto-shrink_800_800/0/1654820828871?e=1694044800&v=beta&t=poAJy-brOT9GucqFCPC8SpBXjaJFGx-tAs78DUAe2ZQ',
-  //   'https://media.licdn.com/dms/image/D5603AQHLbRShNvTnjQ/profile-displayphoto-shrink_400_400/0/1672523207183?e=1694044800&v=beta&t=e5RVgR1L1B_cMucacwBsQLbcLCX-P02_RqpWAB003MY',
-  //   'https://media.licdn.com/dms/image/C5603AQG6ZdZTqYG0kw/profile-displayphoto-shrink_400_400/0/1644888978375?e=1694044800&v=beta&t=EI1FPyDTxFoYNuQ1guPzQ_AX0Eqnzk8vy5QtqBo80Ds',
+    'https://media.licdn.com/dms/image/C5603AQEzwiruaKNpXg/profile-displayphoto-shrink_400_400/0/1556665090299?e=1694044800&v=beta&t=RFpME37vVXJoUvrX4Y5rr_l8Nv92KRn9fzGolGphW5I',
+    'https://media.licdn.com/dms/image/D5603AQEpzbsGcibFlQ/profile-displayphoto-shrink_400_400/0/1685062093155?e=1694044800&v=beta&t=gcv99cCJBJR0KIFmNOB-U-W-01gnNwRvqm1s-xYjCLs',
+    'https://media.licdn.com/dms/image/C5603AQF5aVV5RPoSow/profile-displayphoto-shrink_800_800/0/1654820828871?e=1694044800&v=beta&t=poAJy-brOT9GucqFCPC8SpBXjaJFGx-tAs78DUAe2ZQ',
+    'https://media.licdn.com/dms/image/D5603AQHLbRShNvTnjQ/profile-displayphoto-shrink_400_400/0/1672523207183?e=1694044800&v=beta&t=e5RVgR1L1B_cMucacwBsQLbcLCX-P02_RqpWAB003MY',
+    'https://media.licdn.com/dms/image/C5603AQG6ZdZTqYG0kw/profile-displayphoto-shrink_400_400/0/1644888978375?e=1694044800&v=beta&t=EI1FPyDTxFoYNuQ1guPzQ_AX0Eqnzk8vy5QtqBo80Ds',
   ];
 
   const linkedinUrls: string[] = [
@@ -33,8 +33,8 @@ export default function Contact() {
     return data;
   }
 
-  const pfps: Promise<string>[] = people.map((person, idx) =>
-    getPFPs(person, linkedinUrls[idx])
+  // const pfps: Promise<string>[] = people.map((person, idx) =>
+  //   getPFPs(person, linkedinUrls[idx])
   // );
 
   /* 
