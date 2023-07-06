@@ -22,12 +22,12 @@
     "puppeteer": "^20.7.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "swr": "^2.2.0",
     "tailwindcss": "3.3.2",
     "typescript": "5.1.6",
     "vm2": "^3.9.19"
   },
   "devDependencies": {
-    "express": "^4.18.2",
-    "jest-puppeteer": "^9.0.0"
+    "express": "^4.18.2"
   }
 }

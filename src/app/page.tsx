@@ -1,9 +1,9 @@
-"use client"
+'use client'
 import Image from 'next/image';
 import React from 'react';
 import axios from 'axios';
 
-// const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
 
 export default function Home() {
 
@@ -15,9 +15,8 @@ export default function Home() {
       console.log('Error requesting Puppeteer API:', error);
     }
   };
-
+  
   // const handleClick = async (e) => {
-  //   e.preventDefault();
   //   try {
   //     const browser = await puppeteer.launch({ headless: false });
   //     const page = await browser.newPage();

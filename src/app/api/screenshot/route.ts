@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
   console.log('url: ', url);
 
-  const browser: Browser = await puppeteer.launch({headless: true});
+  const browser: Browser = await puppeteer.launch({headless: false});
   const page = await browser.newPage();
   await page.goto(url);
   const screenshot = await page.screenshot({ type: 'png' });
