@@ -1,76 +1,69 @@
 import Link from "next/link";
 'use client';
 import axios from 'axios';
+import JSZip from "jszip";
 
 export default function Neo() {
 
-  //FORM DATA CREATION FUNCTION
-  function createFormData(fileElement: HTMLElement) {
-    let files = Array.from(fileElement.files)
-    // console.log('test', files[0]);
-    // type file = {
-    //   lastModified: number,
-    //   lastModifiedDate: object,
-    //   name: string,
-    //   size: number,
-    //   type: string,
-    //   webkitRelativePath: string,
-    // }
-    // const test = {}
-    // const properties = ['lastModified', 'lastModifiedDate', 'name', 'size', 'type', 'webkitRelativePath'];
-    // properties.forEach(key => {
-    //   test[key] = files[0][key];
-    // })
+  // //FORM DATA CREATION FUNCTION
+  // function createFormData(fileElement: any) {
+  //   let files: any[] = Array.from(fileElement.files)
+  //   let formData = new FormData();
+  //   files.forEach((file: any) => {
+  //     formData.append('file', file);
+  //   })
+  //   return formData;
+  // }
 
-    // console.log('new file: ', test);
+  // //FORM DATA FUNCTION ON ELEMENT CHANGE
+  // async function test() {
+  //   //Retreive uploaded files
+  //   const upload: any = document.getElementById('fileInput');
+  //   console.log('test', upload)
+  //   //check if files loaded
+  //   if (upload && upload.length !== 0) {
+  //     //Create form data from upload
+  //     const newFormData = createFormData(upload);
+  //     // Make axios post request sending form data with uploaded files
+  //     const response = axios.post('http://localhost:3000/api/fileUpload', newFormData)
+  //       .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
+  //     console.log('Post request complete'); 
+  //   } else {
+  //     console.error('No file uploaded');
+  //   }
+  // };
 
-    let formData = new FormData();
-    files.forEach((file: any) => {
-      formData.append('file', file);
-    })
-    return formData;
-  }
 
-  //FUNCTION TRIGGER ON ELEMENT CHANGE
-  async function test() {
-    //Retreive uploaded files
-    const upload: HTMLElement | Array<any> | null = document.getElementById('fileInput');
-    //check if files loaded
-    if (upload && upload.length !== 0) {
-      //Create form data from upload
-      const newFormData = createFormData(upload);
-      console.log('entry check', newFormData.getAll('file'))
-      //send form data to server
-      const response = await fetch('api/fileUpload', {
-        method: 'POST',
-        body: newFormData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      console.log('File saved to disk');
+  //FILE ZIP FUNCTION TO RUN ONCHANGE
+  // function createZip () {
+  //   const filesInput: any = document.getElementById('fileInput');
+  //   const files: any = filesInput.files
+  //   const zip = new JSZip()
+  //   for(const file of files) {
+  //     console.log(file);
+  //   }
+  // }
 
-    /*
-    const response = axios.post('http://localhost:3000/api/fileUpload', newFormData, {
-      headers: {
-        'Content-Type' : 'multipart/form-data'
-      }
-    })
-      .catch((err: Error) => console.error('An error occured when making a post request for file upload: ', err))
-    console.log('File saved to disk');
-    */
-  } else {
-    console.error('No file uploaded');
-  }
-};
-
-return (
-  <>
-    <div id="content">
-      <h1>Neo Test</h1>
-      <input id="fileInput" type="file" onChange={test} webkitdirectory="true" multiple/* multiple attr allows for multiple directory upload */></input>
-    </div>
-  </>
-)
+  return (
+    <>
+      <div id="content">
+        <h1>Neo Test</h1>
+        <form method="POST" action="/api/fileUpload" encType="multipart/form-data">
+          <input id="fileInput" type="file" name="directory" webkitdirectory="true" onChange={createZip} ></input>
+          <input type="submit"></input>
+        </form>
+      </div>
+    </>
+  )
 }
+
+//NOTES
+/*
+1. Attempt one set up form creating function with axios to send formdata created from file upload
+  - Replaced with from data HTML creator with submit button
+2. Attempt two building zip function to send zip file to server
+New modules
+1. axios - for streamlining server requests
+2. jszip - for zipping uploads
+*/
 

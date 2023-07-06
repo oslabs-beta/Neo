@@ -1,45 +1,43 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
 import multer from 'multer';
-import formidable from 'formidable';
+const path = require('Path');
+import { createEdgeRouter } from "next-connect";
 
-//Setup Multer storage location
-const storage = multer.diskStorage({
-  destination: function(req, res, cb) {
-    cb(null, './');
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
-  }
-})
+//DEFINE MULTER STORAGE
+// const upload = multer({ dest: './uploads' });
 
-//define Multer upload function
-const upload = multer({
-  storage: storage
-}).any();
-
-//disable nextjs bodyparser
+// disable nextjs bodyparser
+  // Used to allow form parsing from apps like formidable
+  //possibly depracted with discovery of req.formData() function
 export const config = {
   api: {
     bodyParser: false,
   }
-}
+};
 
+//SETUP FOR NEXT-CONNECT ROUTER
+// interface RequestContext {
+//   params: {
+//     id: string;
+//   };
+// }
 
+//NEXT-CONNECT ROUTER
+// const router = createEdgeRouter<NextRequest, RequestContext>();
+
+// router
+//   .use() 
+
+// export async function POST(request: NextRequest, ctx: RequestContext) {
+//   return router.run(request, ctx);
+// }
+
+//BASE NEXTJS13 ROUTER
 //POST request: Write a file that was sent in the request
 export async function POST( req: NextRequest | any, res: NextResponse | any) {
-  console.log('In post request', req.body);
-const data = await new Promise((resolve, reject) => {
-  const form = formidable();
-  form.parse(req, (err, fields, files) => {
-    if (err) reject({ err })
-    resolve({ err, fields, files })
-  })
-})
-console.log('end of parse: ', data)
-
+  //TESTING MULTER FUNCTIONALITY
   // upload(req, res, err => {
-  //   console.log('the res', req.file)
   //   if(err instanceof multer.MulterError) {
   //     console.error('an error occurred with Multer: ', err)
   //   } else if (err) {
@@ -49,3 +47,11 @@ console.log('end of parse: ', data)
   // })
   return NextResponse.json("Return from post request");
 }
+
+//NOTES
+/*
+New modules on this page
+1. Multer - for writing directories to application
+2. Next-connect - for creating a more expresslike server
+3. Path - for merging pathing
+*/
