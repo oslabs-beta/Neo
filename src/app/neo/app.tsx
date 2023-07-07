@@ -25,7 +25,11 @@ export default function App() {
         !file.webkitRelativePath.includes('.next') &&
         !file.webkitRelativePath.includes('config') &&
         !file.webkitRelativePath.includes('.git') &&
-        !file.type.includes('image')
+        !file.name.includes('env.d') &&
+        !file.name.includes('README') &&
+        !file.name.includes('package-lock') &&
+        !file.name.includes('eslintrc') &&
+        !file.type.includes('image') 
       ) {
         // SEPARATE FOLDERS FROM FILES
         const filePath = file.webkitRelativePath;
@@ -91,7 +95,7 @@ export default function App() {
         {item.map((file) => (
           <li key={file.name}>
             {file.type === 'file' ? (
-              <span>{'__' + file.name}</span>
+              <span className="ml-3">{file.name}</span>
             ) : (
               <strong onClick={() => handleClick(file.name)}>{'/' + file.name}</strong>
             )}
@@ -109,7 +113,7 @@ export default function App() {
         <p className="text-3xl text-black ml-10">Dashboard</p>
         {/* <button className="bg-black rounded-md p-2 mr-10">Upload File</button> */}
         <input
-          className="bg-black rounded-md p-2 mr-10"
+          className="bg-black rounded-md p-2 mr-10 text-white"
           id="fileInput"
           type="file"
           name="directory"
@@ -119,14 +123,14 @@ export default function App() {
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-20 text-black">
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto">
           {fileStructure && <FileItem item={fileStructure} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}
         </div>
         <div id="app-body_line" className="bg-black"></div>
-        <div id="app-main" className="flex flex-col justify-center text-black">
+        <div id="app-main" className="flex flex-col justify-center text-black mx-8 my-5">
           File.js
           <div className="flex h-1/3">
             <Donut donutData={data} idx={1} />
