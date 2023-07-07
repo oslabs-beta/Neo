@@ -9,11 +9,23 @@ export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
 
+
   //FILE ZIP FUNCTION TO RUN ONCHANGE
-  function createZip() {
-    const filesInput: any = document.getElementById('fileInput');
-    const files: any = filesInput.files;
-    const zip = new JSZip();
+  async function createZip (event: any) {
+    const files: any = event.target.files
+    const zip = new JSZip()
+    //packet all the files
+    for(const file of files) {
+       console.log(file);
+      zip.file(file.name, file, { createFolders: true });
+    }
+    //convert to blob
+    const blobZip = await zip.generateAsync({type: "blob"})
+    console.log('check blobZip: ', blobZip);
+    //send blob to server
+    await axios.post('http://localhost:3000/api/fileUpload', blobZip)
+      .then(res =>  console.log(res))
+      .catch((err: Error) => console.error(err));
 
 
 
@@ -114,7 +126,7 @@ export default function App() {
           type="file"
           name="directory"
           webkitdirectory="true"
-          onChange={createZip}
+          onChange={ createZip }
         ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
