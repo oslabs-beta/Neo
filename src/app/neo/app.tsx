@@ -9,15 +9,14 @@ export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
 
-
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
     const files: any = event.target.files
     const zip = new JSZip()
     //packet all the files
     for(const file of files) {
-       console.log(file);
-      zip.file(file.name, file, { createFolders: true });
+      const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
+      zip.folder(pathing)?.file(file.name, file);
     }
     //convert to blob
     const blobZip = await zip.generateAsync({type: "blob"})
@@ -96,8 +95,7 @@ export default function App() {
     const handleClick = (folderName: string) => {
       onClick(folderName);
     };
-  
-  
+
     return (
       <ul>
         {item.map((file) => (
@@ -113,7 +111,6 @@ export default function App() {
       </ul>
     );
   }
-  
   
   return (
     <div id="content" className="bg-gray-300 rounded-3xl">

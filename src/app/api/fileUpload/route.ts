@@ -6,15 +6,6 @@ import fs from 'fs';
 import decompress from 'decompress';
 import * as fsX from 'fs-extra';
 
-// disable nextjs bodyparser
-  // Used to allow form parsing from apps like formidable
-  //possibly depracted with discovery of req.formData() function
-export const config = {
-  api: {
-    bodyParser: false,
-  }
-};
-
 //SETUP FOR NEXT-CONNECT ROUTER
 interface RequestContext {
   params: {
@@ -36,11 +27,13 @@ router
   /* POST for Zip Files */
   .post(async(req, event, next) => {
     const blobZip = await req.blob()
+    console.log('blob: ', await blobZip);
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = await new DataView(fileBuffer);
-    console.log('test run', data)
+    console.log('dataView', data)
     fs.writeFileSync('test/zip/files.zip', data);
     await decompress('test/zip/files.zip', 'test/unzip');
+    fsX.emptyDirSync('./test/zip');
     return NextResponse.json('Files successfully loaded');
   }) 
 
