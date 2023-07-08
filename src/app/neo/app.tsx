@@ -11,20 +11,6 @@ export default function App() {
   const [chartVision, setChartVision] = useState(false);
 
 
-  const handleGen  = (e: any) : void => {
-    setChartVision(true);
-    setData([70, 30])
-  }
-
-  useEffect(() => {
-    const allCharts = document.getElementById('all-charts')
-    if (chartVision === true) {
-      allCharts.removeAttribute('hidden')
-    } else {
-      allCharts.setAttribute('hidden', 'true')
-    }
-  } , [chartVision])
-
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
     const newFileStructure: Array<FileItem> = [];
@@ -33,7 +19,8 @@ export default function App() {
     //packet all the files
     for (const file of files) {
       //add file to zip
-      zip.file(file.name, file, { createFolders: true });
+      const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
+      zip.folder(pathing)?.file(file.name, file);
       //filter through file types
       if (!file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
@@ -87,7 +74,7 @@ export default function App() {
     setFileStructure(newFileStructure);
     //convert to blob
     const blobZip = await zip.generateAsync({type: "blob"})
-    console.log('check blobZip: ', blobZip);
+    // console.log('check blobZip: ', blobZip);
     //send blob to server
     await axios.post('http://localhost:3000/api/fileUpload', blobZip)
       .then(res =>  console.log(res))
@@ -113,8 +100,7 @@ export default function App() {
     const handleClick = (folderName: string) => {
       onClick(folderName);
     };
-  
-  
+
     return (
       <ul>
         {item.map((file) => (
@@ -130,8 +116,6 @@ export default function App() {
       </ul>
     );
   }
-
-  // end of file item
   
   
   return (
@@ -188,7 +172,4 @@ export default function App() {
       </div>
     </div>
   )
-  
-  // e
-
 }
