@@ -5,22 +5,39 @@ import Chart from 'chart.js/auto';
 type donutProps = {
   donutData: number[];
   idx: number;
+  donutName: string;
+  csize: number;
 };
 
-export default function Donut({ donutData, idx }: donutProps) {
-  const chartRef = useRef<HTMLCanvasElement | null>(null);
-  const myChartRef = useRef<Chart | null>(null);
+export default function Donut({ donutData, idx, donutName, csize }: donutProps) {
+  const [myChartState, setMyChartState] = useState<Chart | null>(null);
 
   useEffect(() => {
-    if (chartRef.current) {
-      if (myChartRef.current) {
-        myChartRef.current.destroy();
+    const chartRef = document.getElementById(`pie-chart${idx}`) as HTMLCanvasElement;
+
+    if (chartRef) {
+      if (myChartState) {
+        myChartState.destroy();
+      }
+      
+      const donutLabel = {
+        id: 'doughnutLabel',
+        beforeDatasetsDraw(chart, args, pluginOptions) {
+          const { ctx, data } = chart;
+          ctx.save();
+          const xCoor = chart.getDatasetMeta(0).data[0].x
+          const yCoor = chart.getDatasetMeta(0).data[0].y 
+          // plug in score number here
+          ctx.fillText('100', xCoor, yCoor)
+          ctx.textAlign = 'center'
+          ctx.font = '20px sans-serif'
+        }
       }
 
-      const myChart = new Chart(chartRef.current, {
+      const myChart = new Chart(chartRef, {
         type: 'doughnut',
         data: {
-          label: 'Overall',
+          // label: 'Overall',
           labels: ['Green'],
           datasets: [
             {
@@ -33,70 +50,33 @@ export default function Donut({ donutData, idx }: donutProps) {
           plugins: {
             title: {
               display: true,
-              text: 'Overall Score',
-              font: {size: 24},
-            },
-          }
+              text: donutName,
+              font: {size: idx === 1 ? 24 : 16},
+            }, 
+          },
         },
+        plugins: [donutLabel],
       });
 
       const datasets = myChart.data.datasets;
       datasets[0].data = donutData;
       myChart.update();
 
-      myChartRef.current = myChart;
+      setMyChartState(myChart);
     }
 
-    // const pieChartCanvas: HTMLElement | null = document.getElementById(
-    //   `pie-chart${idx}`
-    // );
-    // if (pieChartCanvas) {
-    // new Chart(pieChartCanvas, {
-    //   type: 'doughnut',
-
-    //   data: {
-    //     label: 'Overall',
-    //     labels: ['Green'],
-    //     datasets: [
-    //       {
-    //         data: [70, 30],
-    //         backgroundColor: ['green', 'white'],
-    //       },
-    //     ],
-    //   },
-    //   options: {
-    //     title: {
-    //       display: true,
-    //       text: 'Overall Score',
-    //       fontSize: 24,
-    //     },
-    //   },
-    // });
-    // }
-
-    // const datasets = myChart.data.datasets;
-    // datasets[0].data = [30, 70];
-    // myChart.update();
-
-    // myChart.destroy();
   }, [donutData]);
 
-  // const pieCharts = [];
-
-  // for (let i = 0; i < 5; i++) {
-  //   pieCharts.push(
-  //     <canvas key={i} id={`pie-chart${i}`} width="200" height="200"></canvas>
-  //   );
-  // }
-
   return (
-    <>
+    <div 
+      style={
+        {
+          height: `${csize}px`,
+          width: `${csize}px`
+      }}>
       <canvas
-        ref={chartRef}
         id={`pie-chart${idx}`}
-        width="200"
-        height="200"
       ></canvas>
-    </>
+    </div>
   );
 }

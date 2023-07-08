@@ -32,6 +32,13 @@ a:hover {
   background-color: whitesmoke;
 }
 
+.directoryItem {
+  cursor: pointer;
+}
+.directoryItem.selected {
+  font-weight: bold;
+}
+
 .footer {
   color: whitesmoke;
   /* border: 1px solid blue; */
@@ -63,7 +70,7 @@ a:hover {
 }
 
 #app-body_line {
-  margin: 0 1%;
+  margin-left: -1%;
   width: 10px;
   height: 65vh;
   border-radius: 0 0 10px 10px;
@@ -73,11 +80,12 @@ a:hover {
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-  width: 16px;
+  width: 8px;
 }
 
 *::-webkit-scrollbar-track {
-  background: #131314;
+  /* background: #000000; */
+  border-radius: 0 0 10px 10px;
 }
 
 *::-webkit-scrollbar-thumb {
