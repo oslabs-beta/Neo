@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
@@ -8,46 +8,52 @@ import JSZip from 'jszip';
 export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
+  const [chartVision, setChartVision] = useState(false);
 
+
+  const handleGen  = (e: any) : void => {
+    setChartVision(true);
+    setData([70, 30])
+  }
+
+  useEffect(() => {
+    const allCharts = document.getElementById('all-charts')
+    if (chartVision === true) {
+      allCharts.removeAttribute('hidden')
+    } else {
+      allCharts.setAttribute('hidden', 'true')
+    }
+  } , [chartVision])
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
+    const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files
     const zip = new JSZip()
     //packet all the files
-    for(const file of files) {
-       console.log(file);
-      zip.file(file.name, file, { createFolders: true });
-    }
-    //convert to blob
-    const blobZip = await zip.generateAsync({type: "blob"})
-    console.log('check blobZip: ', blobZip);
-    //send blob to server
-    await axios.post('http://localhost:3000/api/fileUpload', blobZip)
-      .then(res =>  console.log(res))
-      .catch((err: Error) => console.error(err));
-
-
-
-    // CREATE ARRAY OF FILE ITEMS, FILTER PRIORITY
-    const newFileStructure: Array<FileItem> = [];
     for (const file of files) {
+      //add file to zip
+      zip.file(file.name, file, { createFolders: true });
+      //filter through file types
       if (!file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
         !file.webkitRelativePath.includes('.next') &&
         !file.webkitRelativePath.includes('config') &&
         !file.webkitRelativePath.includes('.git') &&
+        !file.webkitRelativePath.includes('zip') &&
         !file.name.includes('env.d') &&
         !file.name.includes('README') &&
         !file.name.includes('package-lock') &&
         !file.name.includes('eslintrc') &&
-        !file.type.includes('image') 
+        !file.type.includes('image') &&
+        !file.name.startsWith('.') 
       ) {
         // SEPARATE FOLDERS FROM FILES
         const filePath = file.webkitRelativePath;
         const filePathParts = filePath.split('/');
         const fileName = filePathParts.pop() as string;
         let currentFolder = newFileStructure;
+        console.log(file);
 
         for (const folderName of filePathParts) {
           const existingFolder = currentFolder.find((item) => item.name === folderName);
@@ -73,12 +79,19 @@ export default function App() {
           size: file.size,
           lastModified: file.lastModified,
         });
-
-        console.log(file);
+        //File test
+        // console.log(file);
       }
     }
-
+    //Create styling
     setFileStructure(newFileStructure);
+    //convert to blob
+    const blobZip = await zip.generateAsync({type: "blob"})
+    console.log('check blobZip: ', blobZip);
+    //send blob to server
+    await axios.post('http://localhost:3000/api/fileUpload', blobZip)
+      .then(res =>  console.log(res))
+      .catch((err: Error) => console.error(err));
   }
 
   // END OF CREATE ZIP FUNCTION
@@ -105,7 +118,7 @@ export default function App() {
     return (
       <ul>
         {item.map((file) => (
-          <li key={file.name}>
+          <li key={file.name} className="directoryItem">
             {file.type === 'file' ? (
               <span className="ml-3">{file.name}</span>
             ) : (
@@ -117,6 +130,8 @@ export default function App() {
       </ul>
     );
   }
+
+  // end of file item
   
   
   return (
@@ -129,8 +144,8 @@ export default function App() {
           id="fileInput"
           type="file"
           name="directory"
-          webkitdirectory="true"
           onChange={ createZip }
+          webkitdirectory='true'
         ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
@@ -142,63 +157,38 @@ export default function App() {
           </button> */}
         </div>
         <div id="app-body_line" className="bg-black"></div>
-        <div id="app-main" className="flex flex-col justify-center text-black mx-8 my-5">
+        <div id="app-main" className="flex flex-col justify-center items-center text-black mx-8 my-5">
           File.js
-          <div className="flex h-1/3">
-            <Donut donutData={data} idx={1} />
+          <div id="all-charts" hidden>
+            <div id="overall-donut" className='flex justify-center items-center'>
+              <Donut donutData={data} idx={1} donutName={'Overall Score'} csize={250} />
+            </div>
+            <div id="technical-donuts" className='flex my-10'>
+              <Donut donutData={data} idx={2} donutName={'Performance'} csize={150} />
+              <Donut donutData={data} idx={3} donutName={'Indexability'} csize={150}/>
+              <Donut donutData={data} idx={4} donutName={'URL Quality'} csize={150}/>
+              <Donut donutData={data} idx={5} donutName={'Markup Validity'} csize={150}/>
+            </div>
           </div>
-          <div className="flex h-1/4">
-            <Donut donutData={data} idx={2} />
-            <Donut donutData={data} idx={3} />
-            {/* <Donut donutData={data} idx={4} /> */}
-            {/* <Donut donutData={data} idx={5} /> */}
-          </div>
+          <div className='flex'>
           <button
-            className="bg-black rounded-md p-2 text-white"
-            onClick={() => setData([70, 30])}
+            className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
+            onClick={() => handleGen()}
           >
             Generate
           </button>
+          <button
+            className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
+            onClick={() => setChartVision(false)}
+          >
+            Reset
+          </button>
+          </div>
         </div>
       </div>
     </div>
   )
+  
+  // e
 
 }
-
-/*
-<div id="content" className="bg-gray-300 rounded-3xl">
-      <div id="app-header" className="flex justify-between">
-        <p className="text-3xl text-black ml-10">Dashboard</p>
-        <input 
-          className="bg-black rounded-md p-2 mr-10 text-white" 
-          id="fileInput" 
-          type="file" 
-          name="directory" 
-          webkitdirectory="true" 
-          onChange={createZip} 
-        ></input>
-      </div>
-      <div id="app-header_line" className="bg-black rounded-xl"></div>
-      <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-20 text-black">
-          {fileStructure && <FileItem item={fileStructure} />}
-          {/* <button className="bg-black rounded-md p-2 text-white">
-            Add Folder
-          </button> }
-          </div>
-          <div id="app-body_line" className="bg-black"></div>
-          <div
-            id="app-main"
-            className="flex flex-col justify-center text-black"
-          >
-  
-            <button className="bg-black rounded-md p-2 text-white">
-              Generate
-            </button>
-          </div>
-        </div>
-      </div>
-      </>
-
-*/

@@ -32,6 +32,13 @@ a:hover {
   background-color: whitesmoke;
 }
 
+.directoryItem {
+  cursor: pointer;
+}
+.directoryItem.selected {
+  font-weight: bold;
+}
+
 .footer {
   color: whitesmoke;
   /* border: 1px solid blue; */

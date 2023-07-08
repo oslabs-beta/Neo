@@ -6,15 +6,6 @@ import fs from 'fs';
 import decompress from 'decompress';
 import * as fsX from 'fs-extra';
 
-// disable nextjs bodyparser
-  // Used to allow form parsing from apps like formidable
-  //possibly depracted with discovery of req.formData() function
-export const config = {
-  api: {
-    bodyParser: false,
-  }
-};
-
 //SETUP FOR NEXT-CONNECT ROUTER
 interface RequestContext {
   params: {
