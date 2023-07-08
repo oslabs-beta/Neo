@@ -10,6 +10,20 @@ export default function App() {
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
   
+  const handleGen  = (e: any) : void => {
+    setChartVision(true);
+    setData([70, 30])
+  }
+
+  useEffect(() => {
+    const allCharts = document.getElementById('all-charts')
+    if (chartVision === true) {
+      (allCharts as HTMLElement).removeAttribute('hidden')
+    } else {
+      allCharts?.setAttribute('hidden', 'true')
+    }
+  } , [chartVision])
+
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
     const newFileStructure: Array<FileItem> = [];
@@ -117,6 +131,9 @@ export default function App() {
       </ul>
     );
   }
+
+  //FileItem onClick placeholder
+  const func = (str: string) => str + 'dog';
   
   
   return (
@@ -138,7 +155,7 @@ export default function App() {
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
         <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto">
-          {fileStructure && <FileItem item={fileStructure} />}
+          {fileStructure && <FileItem item={fileStructure} onClick={func} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}
@@ -160,7 +177,7 @@ export default function App() {
           <div className='flex'>
           <button
             className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
-            onClick={() => handleGen()}
+            onClick={ handleGen }
           >
             Generate
           </button>

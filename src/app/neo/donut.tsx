@@ -22,7 +22,8 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
       
       const donutLabel = {
         id: 'doughnutLabel',
-        beforeDatasetsDraw(chart, args, pluginOptions) {
+        // beforeDatasetsDraw(chart: Chart, args: any, pluginOptions: any) {
+          beforeDatasetsDraw(chart: Chart) {
           const { ctx, data } = chart;
           ctx.save();
           const xCoor = chart.getDatasetMeta(0).data[0].x
@@ -60,12 +61,14 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
 
       const datasets = myChart.data.datasets;
       datasets[0].data = donutData;
-      myChart.update();
-
-      setMyChartState(myChart);
+      
+      if (myChart) {
+        myChart.update();
+        setMyChartState(myChart as Chart);
+      }
     }
 
-  }, [donutData]);
+  }, [donutData, idx, donutName, myChartState]);
 
   return (
     <div 
