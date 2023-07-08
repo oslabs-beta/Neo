@@ -9,8 +9,7 @@ export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
-
-
+  
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
     const newFileStructure: Array<FileItem> = [];
@@ -19,8 +18,10 @@ export default function App() {
     //packet all the files
     for (const file of files) {
       //add file to zip
-      const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
-      zip.folder(pathing)?.file(file.name, file);
+      if(!file.webkitRelativePath.includes('node_modules')) {
+        const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
+        zip.folder(pathing)?.file(file.name, file);
+      }
       //filter through file types
       if (!file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
@@ -130,6 +131,8 @@ export default function App() {
           name="directory"
           onChange={ createZip }
           webkitdirectory='true'
+          directory='true'
+          mozdirectory = 'true'
         ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
@@ -172,4 +175,14 @@ export default function App() {
       </div>
     </div>
   )
+}
+
+//Fix input directory attributes
+declare module 'react' {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    // extends React's HTMLAttributes
+    directory?: string;
+    webkitdirectory?:string;
+    mozdirectory?:string;
+  }
 }
