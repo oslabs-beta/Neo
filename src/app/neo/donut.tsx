@@ -68,7 +68,7 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
       }
     }
 
-  }, [donutData, idx, donutName, myChartState]);
+  }, [donutData]);
 
   return (
     <div 

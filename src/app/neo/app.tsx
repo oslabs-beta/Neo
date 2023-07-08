@@ -32,7 +32,10 @@ export default function App() {
     //packet all the files
     for (const file of files) {
       //add file to zip
-      if(!file.webkitRelativePath.includes('node_modules')) {
+      if(
+        !file.webkitRelativePath.includes('node_modules') &&
+        !file.webkitRelativePath.includes('.next')
+      ) {
         const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
         zip.folder(pathing)?.file(file.name, file);
       }
