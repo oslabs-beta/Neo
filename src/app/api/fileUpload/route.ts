@@ -5,7 +5,10 @@ import { createEdgeRouter } from "next-connect";
 import fs from 'fs';
 import decompress from 'decompress';
 import * as fsX from 'fs-extra';
+<<<<<<< HEAD
 import next from 'next/types';
+=======
+>>>>>>> dev
 
 //SETUP FOR NEXT-CONNECT ROUTER
 interface RequestContext {
