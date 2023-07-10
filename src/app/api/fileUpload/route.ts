@@ -19,8 +19,8 @@ const router = createEdgeRouter<NextRequest, RequestContext>();
 router
   //FILE CLEANUP
   .post(async(req, event, next) => {
-      fsX.emptyDirSync('./test/zip');
-      fsX.emptyDirSync('./test/unzip');
+      fsX.emptyDirSync('./upload/zip');
+      fsX.emptyDirSync('./upload/unzip');
     return next()
   })
 
@@ -29,14 +29,14 @@ router
     const blobZip = await req.blob()
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = new DataView(fileBuffer);
-    fs.writeFileSync('test/zip/files.zip', data);
+    fs.writeFileSync('upload/zip/files.zip', data);
     return next()
   })
 
   /* UNPACK ZIP FILE */
   .post(async(req, event, next) => {
-    await decompress('test/zip/files.zip', 'test/unzip');
-    fsX.emptyDirSync('./test/zip');
+    await decompress('upload/zip/files.zip', 'upload/unzip');
+    fsX.emptyDirSync('./upload/zip');
     return NextResponse.json('Files successfully loaded');
   }) 
 
