@@ -9,7 +9,20 @@ export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
+  
+  const handleGen  = (e: any) : void => {
+    setChartVision(true);
+    setData([70, 30])
+  }
 
+  useEffect(() => {
+    const allCharts = document.getElementById('all-charts')
+    if (chartVision === true) {
+      (allCharts as HTMLElement).removeAttribute('hidden')
+    } else {
+      allCharts?.setAttribute('hidden', 'true')
+    }
+  } , [chartVision])
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
@@ -19,8 +32,13 @@ export default function App() {
     //packet all the files
     for (const file of files) {
       //add file to zip
-      const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
-      zip.folder(pathing)?.file(file.name, file);
+      if(
+        !file.webkitRelativePath.includes('node_modules') &&
+        !file.webkitRelativePath.includes('.next')
+      ) {
+        const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
+        zip.folder(pathing)?.file(file.name, file);
+      }
       //filter through file types
       if (!file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
@@ -116,6 +134,9 @@ export default function App() {
       </ul>
     );
   }
+
+  //FileItem onClick placeholder
+  const func = (str: string) => str + 'dog';
   
   
   return (
@@ -130,12 +151,14 @@ export default function App() {
           name="directory"
           onChange={ createZip }
           webkitdirectory='true'
+          directory='true'
+          mozdirectory = 'true'
         ></input>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
         <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto">
-          {fileStructure && <FileItem item={fileStructure} />}
+          {fileStructure && <FileItem item={fileStructure} onClick={func} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}
@@ -157,7 +180,7 @@ export default function App() {
           <div className='flex'>
           <button
             className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
-            onClick={() => handleGen()}
+            onClick={ handleGen }
           >
             Generate
           </button>
@@ -172,4 +195,14 @@ export default function App() {
       </div>
     </div>
   )
+}
+
+//Fix input directory attributes
+declare module 'react' {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    // extends React's HTMLAttributes
+    directory?: string;
+    webkitdirectory?:string;
+    mozdirectory?:string;
+  }
 }
