@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-const path = require('Path');
+// const path = require('Path');
 import { createEdgeRouter } from "next-connect";
 import fs from 'fs';
 import decompress from 'decompress';
@@ -18,14 +18,14 @@ const router = createEdgeRouter<NextRequest, RequestContext>();
 
 router
   //FILE CLEANUP
-  .post(async(req, event, next) => {
-      fsX.emptyDirSync('./test/zip');
-      fsX.emptyDirSync('./test/unzip');
+  .post(async (req, event, next) => {
+    fsX.emptyDirSync('./test/zip');
+    fsX.emptyDirSync('./test/unzip');
     return next()
   })
 
   //CREATE ZIP
-  .post(async(req, event, next) => {
+  .post(async (req, event, next) => {
     const blobZip = await req.blob()
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = new DataView(fileBuffer);
@@ -34,11 +34,11 @@ router
   })
 
   /* UNPACK ZIP FILE */
-  .post(async(req, event, next) => {
+  .post(async (req, event, next) => {
     await decompress('test/zip/files.zip', 'test/unzip');
     fsX.emptyDirSync('./test/zip');
     return NextResponse.json('Files successfully loaded');
-  }) 
+  })
 
 export async function POST(request: NextRequest, ctx: RequestContext) {
   return router.run(request, ctx);
