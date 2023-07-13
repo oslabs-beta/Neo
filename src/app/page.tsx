@@ -1,10 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export const config = {
-  unstable_runtimeJS: false
-};
-
 export default function Home() {
   return (
     <div className="flex justify-around items-center text-white" id="content">
