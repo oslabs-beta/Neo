@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import * as fsX from 'fs-extra';
 
 const APP = `http://localhost:3000`;
 
@@ -9,10 +10,14 @@ describe('Client side features', () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({ headless: 'new'});
     page = await browser.newPage();
+    fsX.emptyDirSync('./upload/zip');
+    fsX.emptyDirSync('./upload/unzip');
   });
 
   afterAll(() => {
     browser.close();
+    fsX.emptyDirSync('./upload/zip');
+    fsX.emptyDirSync('./upload/unzip');
   });
 
   describe('Initial load', () => {
@@ -52,4 +57,29 @@ describe('Client side features', () => {
       expect(label).toBe('Home');
     });
   });
+
+  describe('File structure should display in sidebar after upload', () => {
+    it('is empty until input is selected', async () => {
+      await page.goto(APP + '/neo');
+      await page.waitForSelector('#pageHeaderNeo');
+      const sidebarChildren: HTMLElement = await page.$('#fileStructure');
+      expect(sidebarChildren).toBe(null);
+    })
+
+    it('generates file list after input is clicked', async () =>{
+      await page.goto(APP + '/neo');
+      await page.waitForSelector('#pageHeaderNeo');
+      const [fileChooser] = await Promise.all([
+        page.waitForFileChooser(),
+        page.click('#fileInput'),
+      ]);
+      await fileChooser.accept(['./__tests__/Puppeteer/test']);
+      const tableEl = await page.waitForSelector('#fileStructure');
+      expect(tableEl);
+      //wait for server response and delete files
+      await page.waitForResponse(async (response: any) => {
+        return (await response);
+      })
+    })
+  })
 })
