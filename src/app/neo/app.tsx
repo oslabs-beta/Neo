@@ -26,12 +26,12 @@ export default function App() {
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
-    console.log('target', event.target.files);
     const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files
     const zip = new JSZip()
     //packet all the files
     for (const file of files) {
+      console.log('in file loop');
       //Conditional ignore for zip file
       if(
         !file.webkitRelativePath.includes('node_modules') &&
@@ -187,6 +187,7 @@ export default function App() {
             Generate
           </button>
           <button
+            id="reset"
             className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
             onClick={() => setChartVision(false)}
           >

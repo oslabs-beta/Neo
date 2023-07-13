@@ -2,6 +2,8 @@ import puppeteer from "puppeteer";
 import * as fsX from 'fs-extra';
 
 const APP = `http://localhost:3000`;
+const zipStorage = './upload/zip';
+const unzipStorage= './upload/unzip';
 
 describe('Client side features', () => {
   let browser: any;
@@ -10,14 +12,12 @@ describe('Client side features', () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({ headless: 'new'});
     page = await browser.newPage();
-    fsX.emptyDirSync('./upload/zip');
-    fsX.emptyDirSync('./upload/unzip');
+    fsX.emptyDirSync(zipStorage);
+    fsX.emptyDirSync(unzipStorage);
   });
 
   afterAll(() => {
     browser.close();
-    fsX.emptyDirSync('./upload/zip');
-    fsX.emptyDirSync('./upload/unzip');
   });
 
   describe('Initial load', () => {
@@ -69,17 +69,41 @@ describe('Client side features', () => {
     it('generates file list after input is clicked', async () =>{
       await page.goto(APP + '/neo');
       await page.waitForSelector('#pageHeaderNeo');
+      //invoke input and select test folder
       const [fileChooser] = await Promise.all([
         page.waitForFileChooser(),
         page.click('#fileInput'),
       ]);
       await fileChooser.accept(['./__tests__/Puppeteer/test']);
-      const tableEl = await page.waitForSelector('#fileStructure');
-      expect(tableEl);
-      //wait for server response and delete files
+      //clean up upload files
       await page.waitForResponse(async (response: any) => {
         return (await response);
-      })
+      });
+      fsX.emptyDirSync(zipStorage);
+      fsX.emptyDirSync(unzipStorage);
+      //test that elements mounted in sidebar have content
+      await page.waitForSelector('#fileStructure');
+      const label: string = await page.$eval('#fileStructure', (el: HTMLElement) => el.innerText)
+      expect(label.length).toBeGreaterThan(0);
+    })
+  })
+
+  describe('Generate and Reset buttons should add and remove graphs',  () => {
+    it('pressing Gernerate should create content', async () => {
+      await page.goto(APP + '/neo');
+      await page.waitForSelector('#handleGen');
+      //function for current status of hidden
+      async function hiddenStatus () {
+        const hidden = await page.$eval('#all-charts', (el: HTMLElement) => {
+          return el.getAttribute('hidden');
+        })
+        return hidden
+      }
+      expect(await hiddenStatus()).toBeTruthy();
+      await page.click('#handleGen');
+      expect(await hiddenStatus()).toBeNull();
+      await page.click('#reset');
+      expect(await hiddenStatus()).toBeTruthy;
     })
   })
 })
