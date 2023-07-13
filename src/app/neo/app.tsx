@@ -9,6 +9,7 @@ export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
+  const [inputOption, setInputOption] = useState(true);
   
   const handleGen  = (e: any) : void => {
     setChartVision(true);
