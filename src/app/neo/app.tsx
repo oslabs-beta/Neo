@@ -179,6 +179,7 @@ export default function App() {
           </div>
           <div className='flex'>
           <button
+            id='handleGen'
             className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
             onClick={ handleGen }
           >
