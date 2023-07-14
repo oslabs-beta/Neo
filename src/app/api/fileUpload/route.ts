@@ -1,6 +1,4 @@
-import { NextResponse } from 'next/server'
-import { NextRequest } from 'next/server'
-// const path = require('Path');
+import { NextResponse, NextRequest } from 'next/server'
 import { createEdgeRouter } from "next-connect";
 import fs from 'fs';
 import decompress from 'decompress';
@@ -9,6 +7,7 @@ import { exec, ExecException } from 'child_process'
 import path from 'path';
 import { memo } from 'react';
 import { generateAsync } from 'jszip';
+import puppeteer, { Browser } from 'puppeteer';
 
 //SETUP FOR NEXT-CONNECT ROUTER
 interface RequestContext {
@@ -77,7 +76,7 @@ router
       if (err) console.log('error while adding Dockerfile: ', err);
     })
 
-    fs.cp('instrumentation.txt', `${newAppPath}/app/instrumentation.ts`, err => {
+    fs.cp('src/instrumentation.ts', `${newAppPath}/src/instrumentation.ts`, err => {
       if (err) console.log('error while adding Dockerfile: ', err);
     })
 
@@ -127,6 +126,30 @@ router
     return NextResponse.json('Files successfully loaded');
     // return next()
   })
+
+// Puppeteer Call
+// .post(async (req, event, next) => {
+
+//   const browser = await puppeteer.launch({ headless: 'new' });
+//   const page = await browser.newPage();
+
+//   const port = ports[ports.length - 1];
+//   console.log(port);
+//   await page.goto(`http://localhost:${port}`);
+
+//   // Perform Metrics Here
+//   //get entries returns an array of all performance API metrics    
+//   const getEntries = await page.evaluate(function () {
+//     return JSON.stringify(window.performance.getEntries());
+//   })
+//   //parsing the object provides the array
+//   const parseEntries = JSON.parse(getEntries);
+//   console.log('performance metrics on user app:', parseEntries);
+
+//   await browser.close();
+//   return NextResponse.json('Files successfully loaded');
+//   // return next()
+// })
 
 
 export async function POST(request: NextRequest, ctx: RequestContext) {

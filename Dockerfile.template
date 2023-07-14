@@ -9,7 +9,7 @@ COPY . /app/users-app/
 
 RUN npm i
 
-RUN npm i @vercel/otel
+RUN npm i @vercel/otel @opentelemetry/sdk-node @opentelemetry/resources @opentelemetry/semantic-conventions @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-http
 
 RUN npm run build
 
