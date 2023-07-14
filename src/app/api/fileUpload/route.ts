@@ -27,8 +27,8 @@ const router = createEdgeRouter<NextRequest, RequestContext>();
 router
   //FILE CLEANUP
   .post(async (req, event, next) => {
-    fsX.emptyDirSync('./test/zip');
-    fsX.emptyDirSync('./test/unzip');
+    fsX.emptyDirSync('./upload/zip');
+    fsX.emptyDirSync('./upload/unzip');
     return next()
   })
 
@@ -37,18 +37,18 @@ router
     const blobZip = await req.blob()
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = new DataView(fileBuffer);
-    fs.writeFileSync('test/zip/files.zip', data);
+    fs.writeFileSync('upload/zip/files.zip', data);
     return next()
   })
 
   /* UNPACK ZIP FILE */
   .post(async (req, event, next) => {
-    await decompress('test/zip/files.zip', 'test/unzip');
-    fsX.emptyDirSync('test/zip');
-    fs.rmdirSync('test/zip')
+    await decompress('upload/zip/files.zip', 'upload/unzip');
+    fsX.emptyDirSync('upload/zip');
+    fs.rmdirSync('upload/zip')
 
     // save name of App
-    memory.appname = fs.readdirSync('test/unzip')[0];
+    memory.appname = fs.readdirSync('upload/unzip')[0];
     console.log('appname', memory.appname);
 
     return next()
@@ -62,7 +62,7 @@ router
     console.log('added dockerfile and dockerignore')
     console.log('memory.appname', memory.appname);
 
-    const newAppPath: string = `test/unzip/${memory.appname}`;
+    const newAppPath: string = `upload/unzip/${memory.appname}`;
     const dockerFilePath: string = `${newAppPath}/Dockerfile.user`;
 
     memory.newAppPath = newAppPath;
@@ -121,7 +121,7 @@ router
     });
 
     // delete local directory once docker is setUp
-    // fsX.emptyDir('test');
+
 
     return NextResponse.json('Files successfully loaded');
     // return next()

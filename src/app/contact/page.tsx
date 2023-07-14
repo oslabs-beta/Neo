@@ -46,6 +46,7 @@ export default function Contact() {
 
   return (
     <div id="content">
+      <header id="pageHeaderContact" hidden>Contact</header>
       <div className="flex flex-wrap justify-center py-5">{cards}</div>
     </div>
   );
