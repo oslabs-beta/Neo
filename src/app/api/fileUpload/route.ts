@@ -105,9 +105,10 @@ router
     const { port } = req.locals;
 
     // add 1 second delay in case container isn't fully spun up
-    setTimeout(async () => {
-      await puppeteerAnalyzer(port as number);
-    }, 1000);
+    // setTimeout(async () => {
+    //   await puppeteerAnalyzer(port as number);
+    // }, 1000);
+    await puppeteerAnalyzer(port as number);
 
     return NextResponse.json('Files successfully loaded');
   })

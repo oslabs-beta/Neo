@@ -9,7 +9,8 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
     const page: Page = await browser.newPage();
 
     console.log(port);
-    await page.goto(`http://localhost:${port}`);
+    // wait until parameter waits for page to load
+    await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
 
     // Perform Metrics Here
     //get entries returns an array of all performance API metrics    
