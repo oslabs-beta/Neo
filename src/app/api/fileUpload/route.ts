@@ -1,13 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { createEdgeRouter } from "next-connect";
-import fs from 'fs';
 import decompress from 'decompress';
+import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { exec, ExecException } from 'child_process'
-import path from 'path';
-import { memo } from 'react';
-import { generateAsync } from 'jszip';
-import puppeteer, { Browser } from 'puppeteer';
+import { puppeteerAnalyzer } from './puppeteer';
+import { dockerFuncs } from './dockerController';
+const { AddFiles, BuildAndRun } = dockerFuncs;
 
 //SETUP FOR NEXT-CONNECT ROUTER
 interface RequestContext {
@@ -16,20 +14,25 @@ interface RequestContext {
   };
 }
 
-type memObject = Record<string, string | number>;
-const memory: memObject = {};
+// EXTEND NEXT-REQUEST TO TAKE A LOCALS OBJECT FOR DATA PASSING
+interface ExtraNextReq extends NextRequest {
+  locals: {
+    [key: string]: unknown; // use like res.locals, now req.locals
+  }
+}
 
 const ports: number[] = [9090, 16686, 14268, 14250, 9411, 1888, 8888, 8889, 13133, 4317, 4318, 55679];
+const portsCopy: number[] = [...ports]; // save original copy for reset
 
 //NEXT-CONNECT ROUTER
-const router = createEdgeRouter<NextRequest, RequestContext>();
+const router = createEdgeRouter<ExtraNextReq, RequestContext>();
 
 router
   //FILE CLEANUP
   .post(async (req, event, next) => {
     fsX.emptyDirSync('./upload/zip');
     fsX.emptyDirSync('./upload/unzip');
-    return next()
+    return next();
   })
 
   //CREATE ZIP
@@ -38,20 +41,22 @@ router
     const fileBuffer: any = await blobZip.arrayBuffer()
     const data = new DataView(fileBuffer);
     fs.writeFileSync('upload/zip/files.zip', data);
-    return next()
+    return next();
   })
 
   /* UNPACK ZIP FILE */
-  .post(async (req, event, next) => {
+  .post(async (req, res, next) => {
     await decompress('upload/zip/files.zip', 'upload/unzip');
     fsX.emptyDirSync('upload/zip');
-    fs.rmdirSync('upload/zip')
+    fs.rmdirSync('upload/zip');
+
+    // intitialize req.locals
+    req.locals = {};
 
     // save name of App
-    memory.appname = fs.readdirSync('upload/unzip')[0];
-    console.log('appname', memory.appname);
+    req.locals.appname = fs.readdirSync('upload/unzip')[0];
 
-    return next()
+    return next();
   })
 
   // DOCKER PROCESS
@@ -59,26 +64,11 @@ router
   // ADD DOCKERFILE, .DOCKERIGNORE, AND INSTRUMENTATION FILE
   .post(async (req, event, next) => {
 
-    console.log('added dockerfile and dockerignore')
-    console.log('memory.appname', memory.appname);
+    const { appname } = req.locals;
+    req.locals.newAppPath = `upload/unzip/${appname}`;
+    req.locals.dockerFilePath = `upload/unzip/${appname}/Dockerfile.user`;
 
-    const newAppPath: string = `upload/unzip/${memory.appname}`;
-    const dockerFilePath: string = `${newAppPath}/Dockerfile.user`;
-
-    memory.newAppPath = newAppPath;
-    memory.dockerFilePath = dockerFilePath;
-
-    fs.cp('Dockerfile.template', `${newAppPath}/Dockerfile.user`, err => {
-      if (err) console.log('error while adding Dockerfile: ', err);
-    })
-
-    fs.cp('.dockerignore', `${newAppPath}/.dockerignore`, err => {
-      if (err) console.log('error while adding Dockerfile: ', err);
-    })
-
-    fs.cp('src/instrumentation.ts', `${newAppPath}/src/instrumentation.ts`, err => {
-      if (err) console.log('error while adding Dockerfile: ', err);
-    })
+    AddFiles(req.locals);
 
     return next();
   })
@@ -88,9 +78,9 @@ router
 
     const generatePort = (): number => Math.round(Math.random() * 10000 + 1000);
 
-    let bool = true;
+    let bool: boolean = true;
     while (bool) {
-      const port = generatePort();
+      const port: number = generatePort();
       if (ports.includes(port)) continue;
       else {
         ports.push(port)
@@ -99,59 +89,30 @@ router
     }
 
     // assign port name and save to memory
-    const port = ports[ports.length - 1];
-    memory[`${memory.appname}`] = port;
+    const port: number = ports[ports.length - 1];
+    req.locals.port = port;
     console.log('ports array: ', ports);
     console.log('new port: ', port);
 
-    const dockerSetup: string = `
-    docker build -f ${memory.dockerFilePath} -t ${memory.appname} ${memory.newAppPath}
-    docker run -d -p ${port}:3000 ${memory.appname}
-    `;
+    await BuildAndRun(req.locals);
 
-
-    // Build Docker Image and Run Docker Container on Port 4000
-    exec(dockerSetup, (error: ExecException | null, stdout: string, stderr: string): void => {
-      if (error !== null) {
-        console.log(error);
-      } else {
-        console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-      }
-    });
-
-    // delete local directory once docker is setUp
-
-
-    return NextResponse.json('Files successfully loaded');
-    // return next()
+    return next()
   })
 
-// Puppeteer Call
-// .post(async (req, event, next) => {
+  // Puppeteer Call
+  .post(async (req, event, next) => {
 
-//   const browser = await puppeteer.launch({ headless: 'new' });
-//   const page = await browser.newPage();
+    const { port } = req.locals;
 
-//   const port = ports[ports.length - 1];
-//   console.log(port);
-//   await page.goto(`http://localhost:${port}`);
+    // add 1 second delay in case container isn't fully spun up
+    // setTimeout(async () => {
+    //   await puppeteerAnalyzer(port as number);
+    // }, 1000);
+    await puppeteerAnalyzer(port as number);
 
-//   // Perform Metrics Here
-//   //get entries returns an array of all performance API metrics    
-//   const getEntries = await page.evaluate(function () {
-//     return JSON.stringify(window.performance.getEntries());
-//   })
-//   //parsing the object provides the array
-//   const parseEntries = JSON.parse(getEntries);
-//   console.log('performance metrics on user app:', parseEntries);
+    return NextResponse.json('Files successfully loaded');
+  })
 
-//   await browser.close();
-//   return NextResponse.json('Files successfully loaded');
-//   // return next()
-// })
-
-
-export async function POST(request: NextRequest, ctx: RequestContext) {
+export async function POST(request: ExtraNextReq, ctx: RequestContext) {
   return router.run(request, ctx);
 }

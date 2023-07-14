@@ -6,7 +6,7 @@
 .pnp.js
 
 # zipped/unzip files
-/test
+/upload
 
 # testing
 /coverage
