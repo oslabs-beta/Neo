@@ -106,4 +106,6 @@ describe('Client side features', () => {
       expect(await hiddenStatus()).toBeTruthy;
     })
   })
+
+  //need tests for clear tree button
 })

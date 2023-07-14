@@ -4,11 +4,14 @@ import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
+import Input from './input';
 
 export default function App() {
   const [data, setData] = useState([50, 50]);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
+  const [inputOption, setInputOption] = useState(true);
+  const [updateMessage, setUpdateMessage] = useState('checking files');
   
   const handleGen  = (e: any) : void => {
     setChartVision(true);
@@ -24,16 +27,28 @@ export default function App() {
     }
   } , [chartVision])
 
+  async function removeFiles (event: any) {
+    const tree = document.getElementById('deleteStart');
+    while (tree && tree.firstChild) {
+      tree.removeChild(tree.firstChild);
+    }
+    await axios.get('http://localhost:3000/api/cleanUp')
+      .then(res => console.log(res))
+      .catch(err => console.error(err));
+  }
+
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
+    setInputOption(false);
     const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files
     const zip = new JSZip()
     //packet all the files
+    setUpdateMessage('Zipping Files')
     for (const file of files) {
-      console.log('in file loop');
       //Conditional ignore for zip file
       if(
+        file.webkitRelativePath &&
         !file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('.next')
       ) {
@@ -42,7 +57,8 @@ export default function App() {
         zip.folder(pathing)?.file(file.name, file); 
       }
       //filter through file types
-      if (!file.webkitRelativePath.includes('node_modules') &&
+      if ( file.webkitRelativePath &&
+        !file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
         !file.webkitRelativePath.includes('.next') &&
         !file.webkitRelativePath.includes('config') &&
@@ -91,14 +107,24 @@ export default function App() {
       }
     }
     //Create styling
+    setUpdateMessage('Building Tree')
     setFileStructure(newFileStructure);
     //convert to blob
     const blobZip = await zip.generateAsync({type: "blob"})
     // console.log('check blobZip: ', blobZip);
     //send blob to server
+    setUpdateMessage('Sending Files to Server')
     await axios.post('http://localhost:3000/api/fileUpload', blobZip)
-      .then(res =>  console.log(res))
-      .catch((err: Error) => console.error(err));
+      .then(res =>  {
+        console.log(res);
+        setUpdateMessage('Files Uploaded to Server')
+        setTimeout(() => setInputOption(true), 1000)
+      })
+      .catch((err: Error) => {
+        console.error(err);
+        setUpdateMessage('An Error Occurred')
+        setTimeout(() => setInputOption(true), 1000)
+      });
   }
 
   // END OF CREATE ZIP FUNCTION
@@ -145,21 +171,12 @@ export default function App() {
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
         {/* <button className="bg-black rounded-md p-2 mr-10">Upload File</button> */}
-        <input
-          className="bg-black rounded-md p-2 mr-10 text-white"
-          id="fileInput"
-          type="file"
-          name="directory"
-          onChange={ createZip }
-          webkitdirectory='true'
-          directory='true'
-          mozdirectory = 'true'
-        ></input>
+        <Input createZip={ createZip } inputOption={ inputOption } updateMessage={ updateMessage }/>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto">
-          {fileStructure && <FileItem item={fileStructure} onClick={func} />}
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><button id="delete-button" className="font-extrabold" onClick= { removeFiles }>Clear Tree</button>
+          <div id="deleteStart">{fileStructure && <FileItem item={fileStructure} onClick={func} />}</div>
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}
