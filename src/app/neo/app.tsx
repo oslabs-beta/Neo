@@ -31,13 +31,15 @@ export default function App() {
     const zip = new JSZip()
     //packet all the files
     for (const file of files) {
-      //add file to zip
+      console.log('in file loop');
+      //Conditional ignore for zip file
       if(
         !file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('.next')
       ) {
         const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
-        zip.folder(pathing)?.file(file.name, file);
+        //add folder or file to zip
+        zip.folder(pathing)?.file(file.name, file); 
       }
       //filter through file types
       if (!file.webkitRelativePath.includes('node_modules') &&
@@ -118,9 +120,8 @@ export default function App() {
     const handleClick = (folderName: string) => {
       onClick(folderName);
     };
-
     return (
-      <ul>
+      <ul id="fileStructure">
         {item.map((file) => (
           <li key={file.name} className="directoryItem">
             {file.type === 'file' ? (
@@ -179,12 +180,14 @@ export default function App() {
           </div>
           <div className='flex'>
           <button
+            id='handleGen'
             className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
             onClick={ handleGen }
           >
             Generate
           </button>
           <button
+            id="reset"
             className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
             onClick={() => setChartVision(false)}
           >

@@ -7,6 +7,7 @@ export default function Neo() {
 
   return (
     <div>
+      <header id="pageHeaderNeo" hidden>Neo</header>
       <App />
     </div>
   );
