@@ -1,10 +1,11 @@
 type inputProps = {
-  createZip: any;
-  inputOption: any;
-
+  createZip: (event: any) => void;
+  inputOption: boolean;
+  updateMessage: string;
 }
 
-export default function Input ({ createZip, inputOption }: inputProps) {
+export default function Input ({ createZip, inputOption, updateMessage }: inputProps) {
+
   if(inputOption) {
     return(
       <input
@@ -21,7 +22,10 @@ export default function Input ({ createZip, inputOption }: inputProps) {
   }
   else {
     return (
-      <div className="bg-black rounded-md p-2 mr-10 text-white">I&APOSm a place holder</div>
+      <div className="bg-black rounded-md p-2 mr-10 text-white">
+        { updateMessage }
+      </div>
     )
   }
   }
+  // gradient-to-r from- from-${loadBar}% to-black to-${100 - loadBar}%
