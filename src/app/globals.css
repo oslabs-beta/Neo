@@ -7,11 +7,9 @@ body {
   /* margin: 0 15.5%; */
   /* margin-top: 150px; */
   overflow-x: hidden;
-  background: linear-gradient(
-    180deg,
-    #131314 20%,
-    rgba(156, 169, 214, 0.747) 300%
-  );
+  background: linear-gradient(180deg,
+      #131314 20%,
+      rgba(156, 169, 214, 0.747) 300%);
 }
 
 a:hover {
@@ -32,11 +30,14 @@ a:hover {
   background-color: whitesmoke;
 }
 
+
 .directoryItem {
   cursor: pointer;
 }
-.directoryItem.selected {
-  font-weight: bold;
+
+.directoryItem:hover {
+  text-decoration: underline;
+  transition: .69s;
 }
 
 .footer {

@@ -12,8 +12,32 @@ export default function App() {
   const [chartVision, setChartVision] = useState(false);
   const [inputOption, setInputOption] = useState(true);
   const [updateMessage, setUpdateMessage] = useState('checking files');
-  
-  const handleGen  = (e: any) : void => {
+  const [nameDisplay, setNameDisplay] = useState('')
+
+  const handleGen = async (e: any) => {
+    try {
+      const response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+      );
+      type objectArrArr = Record<string, string | number>[][];
+      const data: objectArrArr = await response.json()
+      console.log(data);
+      const arr = [];
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].length; j++) {
+          if (data[i][j].name === 'loadcomponents.loadcomponents') {
+            arr.push(data[i][j].duration)
+          }
+        }
+      }
+      console.log(arr);
+    } catch (error) {
+      console.log('Error', error)
+    }
     setChartVision(true);
     setData([70, 30])
   }
@@ -25,9 +49,9 @@ export default function App() {
     } else {
       allCharts?.setAttribute('hidden', 'true')
     }
-  } , [chartVision])
+  }, [chartVision])
 
-  async function removeFiles (event: any) {
+  async function removeFiles(event: any) {
     const tree = document.getElementById('deleteStart');
     while (tree && tree.firstChild) {
       tree.removeChild(tree.firstChild);
@@ -38,7 +62,7 @@ export default function App() {
   }
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
-  async function createZip (event: any) {
+  async function createZip(event: any) {
     setInputOption(false);
     const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files
@@ -47,17 +71,17 @@ export default function App() {
     setUpdateMessage('Zipping Files')
     for (const file of files) {
       //Conditional ignore for zip file
-      if(
+      if (
         file.webkitRelativePath &&
         !file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('.next')
       ) {
-        const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length-1);
+        const pathing = `${file.webkitRelativePath}`.slice(0, file.webkitRelativePath.length - file.name.length - 1);
         //add folder or file to zip
-        zip.folder(pathing)?.file(file.name, file); 
+        zip.folder(pathing)?.file(file.name, file);
       }
       //filter through file types
-      if ( file.webkitRelativePath &&
+      if (file.webkitRelativePath &&
         !file.webkitRelativePath.includes('node_modules') &&
         !file.webkitRelativePath.includes('webpack') &&
         !file.webkitRelativePath.includes('.next') &&
@@ -69,7 +93,7 @@ export default function App() {
         !file.name.includes('package-lock') &&
         !file.name.includes('eslintrc') &&
         !file.type.includes('image') &&
-        !file.name.startsWith('.') 
+        !file.name.startsWith('.')
       ) {
         // SEPARATE FOLDERS FROM FILES
         const filePath = file.webkitRelativePath;
@@ -89,6 +113,7 @@ export default function App() {
               type: 'folder',
               size: 0,
               lastModified: 0,
+              path: '',
               files: [],
             };
             currentFolder.push(newFolder);
@@ -101,6 +126,7 @@ export default function App() {
           type: 'file',
           size: file.size,
           lastModified: file.lastModified,
+          path: filePath,
         });
         //File test
         // console.log(file);
@@ -110,12 +136,12 @@ export default function App() {
     setUpdateMessage('Building Tree')
     setFileStructure(newFileStructure);
     //convert to blob
-    const blobZip = await zip.generateAsync({type: "blob"})
+    const blobZip = await zip.generateAsync({ type: "blob" })
     // console.log('check blobZip: ', blobZip);
     //send blob to server
     setUpdateMessage('Sending Files to Server')
-    await axios.post('http://localhost:3000/api/fileUpload', blobZip)
-      .then(res =>  {
+    await axios.post('/api/fileUpload', blobZip)
+      .then(res => {
         console.log(res);
         setUpdateMessage('Files Uploaded to Server')
         setTimeout(() => setInputOption(true), 1000)
@@ -135,6 +161,7 @@ export default function App() {
     size: number;
     lastModified: number;
     files?: FileItem[];
+    path: string;
   };
 
   function FileItem({
@@ -144,16 +171,20 @@ export default function App() {
     onClick: (folderName: string) => void;
   }) {
     const handleClick = (folderName: string) => {
-      onClick(folderName);
+      setNameDisplay(folderName)
+      console.log(folderName)
     };
     return (
       <ul id="fileStructure">
         {item.map((file) => (
-          <li key={file.name} className="directoryItem">
+          <li key={file.name} className="directoryBox">
             {file.type === 'file' ? (
-              <span className="ml-3">{file.name}</span>
+              <span className="ml-3 directoryItem"
+                onClick={() => handleClick(file.path)}>{file.name}</span>
             ) : (
-              <strong onClick={() => handleClick(file.name)}>{'/' + file.name}</strong>
+              <strong
+                className="directoryItem"
+                onClick={() => handleClick('/' + file.name)} >{'/' + file.name}</strong>
             )}
             {file.files && <FileItem item={file.files} onClick={onClick} />}
           </li>
@@ -164,18 +195,18 @@ export default function App() {
 
   //FileItem onClick placeholder
   const func = (str: string) => str + 'dog';
-  
-  
+
+
   return (
     <div id="content" className="bg-gray-300 rounded-3xl">
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
         {/* <button className="bg-black rounded-md p-2 mr-10">Upload File</button> */}
-        <Input createZip={ createZip } inputOption={ inputOption } updateMessage={ updateMessage }/>
+        <Input createZip={createZip} inputOption={inputOption} updateMessage={updateMessage} />
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><button id="delete-button" className="font-extrabold" onClick= { removeFiles }>Clear Tree</button>
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><button id="delete-button" className="font-extrabold" onClick={removeFiles}>Clear Tree</button>
           <div id="deleteStart">{fileStructure && <FileItem item={fileStructure} onClick={func} />}</div>
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
@@ -183,33 +214,36 @@ export default function App() {
         </div>
         <div id="app-body_line" className="bg-black"></div>
         <div id="app-main" className="flex flex-col justify-center items-center text-black mx-8 my-5">
-          File.js
+          {nameDisplay}
           <div id="all-charts" hidden>
             <div id="overall-donut" className='flex justify-center items-center'>
               <Donut donutData={data} idx={1} donutName={'Overall Score'} csize={250} />
             </div>
             <div id="technical-donuts" className='flex my-10'>
               <Donut donutData={data} idx={2} donutName={'Performance'} csize={150} />
-              <Donut donutData={data} idx={3} donutName={'Indexability'} csize={150}/>
-              <Donut donutData={data} idx={4} donutName={'URL Quality'} csize={150}/>
-              <Donut donutData={data} idx={5} donutName={'Markup Validity'} csize={150}/>
+              <Donut donutData={data} idx={3} donutName={'Indexability'} csize={150} />
+              <Donut donutData={data} idx={4} donutName={'URL Quality'} csize={150} />
+              <Donut donutData={data} idx={5} donutName={'Markup Validity'} csize={150} />
             </div>
           </div>
           <div className='flex'>
-          <button
-            id='handleGen'
-            className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
-            onClick={ handleGen }
-          >
-            Generate
-          </button>
-          <button
-            id="reset"
-            className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
-            onClick={() => setChartVision(false)}
-          >
-            Reset
-          </button>
+            <button
+              id='handleGen'
+              className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
+              onClick={handleGen}
+            >
+              Generate
+            </button>
+            <button
+              id="reset"
+              className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
+              onClick={() => {
+                setNameDisplay('');
+                setChartVision(false)
+              }}
+            >
+              Reset
+            </button>
           </div>
         </div>
       </div>
@@ -222,7 +256,7 @@ declare module 'react' {
   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     // extends React's HTMLAttributes
     directory?: string;
-    webkitdirectory?:string;
-    mozdirectory?:string;
+    webkitdirectory?: string;
+    mozdirectory?: string;
   }
 }
