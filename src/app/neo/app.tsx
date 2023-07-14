@@ -4,6 +4,7 @@ import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
+import Input from './input';
 
 export default function App() {
   const [data, setData] = useState([50, 50]);
@@ -27,6 +28,7 @@ export default function App() {
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip (event: any) {
+    setInputOption(false);
     const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files
     const zip = new JSZip()
@@ -98,8 +100,14 @@ export default function App() {
     // console.log('check blobZip: ', blobZip);
     //send blob to server
     await axios.post('http://localhost:3000/api/fileUpload', blobZip)
-      .then(res =>  console.log(res))
-      .catch((err: Error) => console.error(err));
+      .then(res =>  {
+        console.log(res);
+        setInputOption(true);
+      })
+      .catch((err: Error) => {
+        console.error(err);
+        setInputOption(true);
+      });
   }
 
   // END OF CREATE ZIP FUNCTION
@@ -146,16 +154,7 @@ export default function App() {
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
         {/* <button className="bg-black rounded-md p-2 mr-10">Upload File</button> */}
-        <input
-          className="bg-black rounded-md p-2 mr-10 text-white"
-          id="fileInput"
-          type="file"
-          name="directory"
-          onChange={ createZip }
-          webkitdirectory='true'
-          directory='true'
-          mozdirectory = 'true'
-        ></input>
+        <Input createZip={ createZip } inputOption={ inputOption } setInputOption={ setInputOption }/>
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
