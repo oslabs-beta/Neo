@@ -1,13 +1,15 @@
 
 FROM node:18
 
-WORKDIR /app/neo
+WORKDIR /app/users-app/
 
 COPY package*.json ./
 
-COPY . /app/neo/
+COPY . /app/users-app/
 
-RUN npm ci
+RUN npm i
+
+RUN npm i @vercel/otel
 
 RUN npm run build
 
