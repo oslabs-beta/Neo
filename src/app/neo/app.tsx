@@ -54,6 +54,7 @@ export default function App() {
   async function removeFiles(event: any) {
     const tree = document.getElementById('deleteStart');
     while (tree && tree.firstChild) {
+      console.log('to be deleted: ', tree.firstChild)
       tree.removeChild(tree.firstChild);
     }
     await axios.get('http://localhost:3000/api/cleanUp')
