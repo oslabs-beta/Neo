@@ -1,25 +1,26 @@
 import puppeteer from "puppeteer";
 import * as fsX from 'fs-extra';
+import globalSetup from './dev-server-setup-modules/global-setup';
+import globalTeardown from './dev-server-setup-modules/gloabl-teardown';
 
 const APP = `http://localhost:3000`;
 const zipStorage = './upload/zip';
 const unzipStorage= './upload/unzip';
+const testFolder = './__tests__/test-app';
 
 describe('Client side features', () => {
   let browser: any;
   let page: any;
   
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: 'new'})
+    await globalSetup();
+    browser = await puppeteer.launch({ headless: 'new'});
     page = await browser.newPage();
     fsX.emptyDirSync(zipStorage);
     fsX.emptyDirSync(unzipStorage);
   });
 
-  afterAll(() => {
-    browser.close();
-  });
-
+  
   describe('Initial load', () => {
     it('loads successfully, testing for hidden header', async () => {
       await page.goto(APP);
@@ -28,7 +29,7 @@ describe('Client side features', () => {
       expect(label).toBe('Home');
     });
   });
-
+  
   describe('Nav bar should navigate to and load correct pages', () => {
     it('navbar "App" button navigates to /neo page, testing for hidden header', async () => {
       await page.goto(APP);
@@ -38,7 +39,7 @@ describe('Client side features', () => {
       const label: string = await page.$eval('#pageHeaderNeo', (el: HTMLElement) => el.innerText)
       expect(label).toBe('Neo');
     });
-
+    
     it('navbar "Contact" button navigates to /contact page, testing for hidden header', async () => {
       await page.goto(APP);
       await page.waitForSelector('#navContact');
@@ -47,7 +48,7 @@ describe('Client side features', () => {
       const label: string = await page.$eval('#pageHeaderContact', (el: HTMLElement) => el.innerText)
       expect(label).toBe('Contact');
     });
-
+    
     it('navbar "Home" button navigates to / page, testing for hidden header', async () => {
       await page.goto(APP);
       await page.waitForSelector('#navHome');
@@ -57,7 +58,7 @@ describe('Client side features', () => {
       expect(label).toBe('Home');
     });
   });
-
+  
   describe('File structure should display in sidebar after upload', () => {
     it('is empty until input is selected', async () => {
       await page.goto(APP + '/neo');
@@ -65,7 +66,7 @@ describe('Client side features', () => {
       const sidebarChildren: HTMLElement = await page.$('#fileStructure');
       expect(sidebarChildren).toBe(null);
     })
-
+    
     it('generates file list after input is clicked', async () =>{
       await page.goto(APP + '/neo');
       await page.waitForSelector('#pageHeaderNeo');
@@ -74,7 +75,7 @@ describe('Client side features', () => {
         page.waitForFileChooser(),
         page.click('#fileInput'),
       ]);
-      await fileChooser.accept(['./__tests__/test-app']);
+      await fileChooser.accept([testFolder]);
       //clean up upload files
       await page.waitForResponse(async (response: any) => {
         return (await response);
@@ -87,25 +88,29 @@ describe('Client side features', () => {
       expect(label.length).toBeGreaterThan(0);
     })
   })
-
-  // describe('Generate and Reset buttons should add and remove graphs',  () => {
-  //   it('pressing Generate should create content', async () => {
-  //     await page.goto(APP + '/neo');
-  //     await page.waitForSelector('#handleGen');
-  //     //function for current status of hidden
-  //     async function hiddenStatus () {
-  //       const hidden = await page.$eval('#all-charts', (el: HTMLElement) => {
-  //         return el.getAttribute('hidden');
-  //       })
-  //       return hidden
-  //     }
-  //     expect(await hiddenStatus()).toBeTruthy();
-  //     await page.click('#handleGen');
-  //     expect(await hiddenStatus()).toBeNull();
-  //     await page.click('#reset');
-  //     expect(await hiddenStatus()).toBeTruthy;
-  //   })
-  // })
-
+  
+  describe('Generate and Reset buttons should add and remove graphs',  () => {
+    it('pressing Generate should create content', async () => {
+      await page.goto(APP + '/neo');
+      await page.waitForSelector('#handleGen');
+      //function for current status of hidden
+      async function hiddenStatus () {
+        const hidden = await page.$eval('#all-charts', (el: HTMLElement) => {
+          return el.getAttribute('hidden');
+        })
+        return hidden
+      }
+      expect(await hiddenStatus()).toBeTruthy();
+      await page.click('#handleGen');
+      expect(await hiddenStatus()).toBeNull();
+      await page.click('#reset');
+      expect(await hiddenStatus()).toBeTruthy;
+    })
+    afterAll(async () => {
+      await browser.close();
+      await globalTeardown();
+    });
+  })
+  
   //need tests for clear tree button
 })
