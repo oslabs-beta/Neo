@@ -27,5 +27,5 @@ export default function Input ({ createZip, inputOption, updateMessage }: inputP
       </div>
     )
   }
-  }
-  // gradient-to-r from- from-${loadBar}% to-black to-${100 - loadBar}%
+}
+// gradient-to-r from- from-${loadBar}% to-black to-${100 - loadBar}%

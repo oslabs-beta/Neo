@@ -5,6 +5,7 @@ import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
+import ClearTree from './clear-tree'
 
 export default function App() {
   const [data, setData] = useState([50, 50]);
@@ -13,6 +14,7 @@ export default function App() {
   const [inputOption, setInputOption] = useState(true);
   const [updateMessage, setUpdateMessage] = useState('checking files');
   const [nameDisplay, setNameDisplay] = useState('')
+  const [clearTreeOption, setClearTreeOption] = useState(false);
 
   const handleGen = async (e: any) => {
     try {
@@ -52,6 +54,7 @@ export default function App() {
   }, [chartVision])
 
   async function removeFiles(event: any) {
+    setClearTreeOption(false);
     const tree = document.getElementById('deleteStart');
     while (tree && tree.firstChild) {
       console.log('to be deleted: ', tree.firstChild)
@@ -134,24 +137,25 @@ export default function App() {
       }
     }
     //Create styling
-    setUpdateMessage('Building Tree')
-    setFileStructure(newFileStructure);
     //convert to blob
-    const blobZip = await zip.generateAsync({ type: "blob" })
+    const blobZip = await zip.generateAsync({ type: "blob" });
     // console.log('check blobZip: ', blobZip);
     //send blob to server
-    setUpdateMessage('Sending Files to Server')
+    setUpdateMessage('Sending Files to Server');
     await axios.post('/api/fileUpload', blobZip)
-      .then(res => {
-        console.log(res);
-        setUpdateMessage('Files Uploaded to Server')
-        setTimeout(() => setInputOption(true), 1000)
-      })
-      .catch((err: Error) => {
-        console.error(err);
-        setUpdateMessage('An Error Occurred')
-        setTimeout(() => setInputOption(true), 1000)
-      });
+    .then(res => {
+      console.log(res);
+      setUpdateMessage('Files Uploaded to Server')
+      setTimeout(() => setInputOption(true), 1000)
+    })
+    .catch((err: Error) => {
+      console.error(err);
+      setUpdateMessage('An Error Occurred')
+      setTimeout(() => setInputOption(true), 1000)
+    });
+    setUpdateMessage('Building Tree');
+    setFileStructure(newFileStructure);
+    setClearTreeOption(true);
   }
 
   // END OF CREATE ZIP FUNCTION
@@ -207,7 +211,7 @@ export default function App() {
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><button id="delete-button" className="font-extrabold" onClick={removeFiles}>Clear Tree</button>
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><ClearTree removeFiles={removeFiles} clearTreeOption={clearTreeOption}/>
           <div id="deleteStart">{fileStructure && <FileItem item={fileStructure} onClick={func} />}</div>
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
