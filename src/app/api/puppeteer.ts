@@ -13,26 +13,17 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
     let bool = true;
     while (bool) {
       try {
-        // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
-            await Promise.all([
-              page.goto(`http://localhost:${port}`),
-              page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-            ]);
+        await Promise.all([
+          page.goto(`http://localhost:${port}`),
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        ]);
         bool = false;
-        
+
       } catch (error) {
         if (error) await page.reload();
       }
     }
 
-    // wait until parameter waits for page to load
-    // await page.waitForTimeout(9000); // wait for 2 seconds
-    // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
-    // await Promise.all([
-    //   page.goto(`http://localhost:${port}`),
-    //   page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-    // ]);
-    
     console.log('navigated to port')
 
     // Perform Metrics Here

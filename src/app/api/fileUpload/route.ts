@@ -3,7 +3,7 @@ import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
 import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { puppeteerAnalyzer } from './puppeteer';
+import { puppeteerAnalyzer } from '../puppeteer';
 import { dockerFuncs } from './dockerController';
 const { AddFiles, BuildAndRun } = dockerFuncs;
 
@@ -54,7 +54,7 @@ router
     req.locals = {};
 
     // save name of App
-    req.locals.appname = fs.readdirSync('upload/unzip')[0];
+    req.locals.appname = fs.readdirSync('upload/unzip')[0].toLowerCase();
 
     return next();
   })
