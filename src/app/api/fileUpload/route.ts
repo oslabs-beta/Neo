@@ -54,7 +54,7 @@ router
     req.locals = {};
 
     // save name of App
-    req.locals.appname = fs.readdirSync('upload/unzip')[0];
+    req.locals.appname = fs.readdirSync('upload/unzip')[0].toLowerCase();
 
     return next();
   })

@@ -38,7 +38,7 @@ export const dockerFuncs = {
 
     // Build Docker Image and Run Docker Container on Randomized Port
     try {
-      const { stdout, stderr }: { stdout: string, stderr: string } = await execSync(dockerSetup);
+      const { stdout, stderr }: { stdout: string, stderr: string } = await execSync(dockerSetup)
       console.log('stdout: ' + stdout);
       console.log('stderr: ' + stderr);
     } catch (error) {
