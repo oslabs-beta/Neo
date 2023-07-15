@@ -4,5 +4,6 @@ module.exports = async function globalSetup() {
   globalThis.servers = await setupDevServer({
     command: `npm run dev`,
     port: 3000,
+    usedPortAction: "ignore",
   });
 };
