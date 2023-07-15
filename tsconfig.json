@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "__tests__/dev-server-setup-modules/gloabl-teardown.js", "__tests__/dev-server-setup-modules/global-setup.js",],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "__tests__/dev-server-setup-modules/global-teardown.js", "__tests__/dev-server-setup-modules/global-setup.js",],
   "exclude": ["node_modules"]
 }

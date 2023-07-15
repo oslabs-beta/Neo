@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer";
 import * as fsX from 'fs-extra';
 import globalSetup from './dev-server-setup-modules/global-setup';
-import globalTeardown from './dev-server-setup-modules/gloabl-teardown';
+import globalTeardown from './dev-server-setup-modules/global-teardown';
 
 const APP = `http://localhost:3000`;
 const zipStorage = './upload/zip';
