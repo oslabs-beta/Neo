@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# zipped/unzip files
+/upload
+
 # testing
 /coverage
 
