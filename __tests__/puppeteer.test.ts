@@ -1,44 +1,33 @@
 import puppeteer from "puppeteer";
 import * as fsX from 'fs-extra';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-const execSync = promisify(exec);
 
 const APP = `http://localhost:3000`;
 const zipStorage = './upload/zip';
 const unzipStorage= './upload/unzip';
-const serverStart = `
-npm run dev
-`
-// const stopServer = `^C`
-
-
 
 describe('Client side features', () => {
   let browser: any;
   let page: any;
   
   beforeAll(async () => {
-    // execSync(serverStart);
-    // browser = await puppeteer.launch({ headless: 'new'})
-    // page = await browser.newPage();
-    // fsX.emptyDirSync(zipStorage);
-    // fsX.emptyDirSync(unzipStorage);
+    browser = await puppeteer.launch({ headless: 'new'})
+    page = await browser.newPage();
+    fsX.emptyDirSync(zipStorage);
+    fsX.emptyDirSync(unzipStorage);
   });
 
   afterAll(() => {
     browser.close();
-    // exec(stopServer);
   });
 
-  // describe('Initial load', () => {
-  //   it('loads successfully, testing for hidden header', async () => {
-  //     await page.goto(APP);
-  //     await page.waitForSelector('#pageHeaderHome');
-  //     const label: string = await page.$eval('#pageHeaderHome', (el: any) => el.innerText);
-  //     expect(label).toBe('Home');
-  //   });
-  // });
+  describe('Initial load', () => {
+    it('loads successfully, testing for hidden header', async () => {
+      await page.goto(APP);
+      await page.waitForSelector('#pageHeaderHome');
+      const label: string = await page.$eval('#pageHeaderHome', (el: any) => el.innerText);
+      expect(label).toBe('Home');
+    });
+  });
 
   // describe('Nav bar should navigate to and load correct pages', () => {
   //   it('navbar "App" button navigates to /neo page, testing for hidden header', async () => {
