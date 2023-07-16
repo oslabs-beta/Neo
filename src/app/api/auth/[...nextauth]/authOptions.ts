@@ -2,6 +2,14 @@ import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
+import { Pool } from "pg";
+import PostgresAdapter from "../../sqlController/PostgresAdapter";
+
+const pg_URI = 'postgres://gymssbhl:nN2Eg1LZKQ-liUJdig1ZIgVNQTJ_5kvc@mahmud.db.elephantsql.com/gymssbhl';
+
+const pool = new Pool({
+  connectionString: pg_URI
+})
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -41,6 +49,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   debug: process.env.NODE_ENV === 'development',
+  adapter: PostgresAdapter(pool),
   pages: {
     signIn: '/signin',
     newUser: '/signup'

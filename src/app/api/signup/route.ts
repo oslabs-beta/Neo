@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import { NextResponse, NextRequest } from 'next/server';
 import NextFunction from 'next';
-import connectToDatabase from '../sql';
 
 export async function POST(request: NextResponse) {
 
@@ -18,10 +17,13 @@ export async function POST(request: NextResponse) {
     return new NextResponse('Account already exists', { status: 401 });
   }
 
-  // hast the password for security
+  // hash the password for security
   const hashPass = await bcrypt.hash(password, 10);
 
   // create user in database with hashed password
+  const addUser = `
+
+  `
 
   const user = {}; // after
 

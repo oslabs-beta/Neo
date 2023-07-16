@@ -46,15 +46,3 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
 
   }
 };
-
-/* 
-
-CREATE TABLE Users (
-  user_id SERIAL PRIMARY KEY,  
-  name NVARCHAR(255) NOT NULL,
-  email NVARCHAR(255) NOT NULL,
-  password NVARCHAR(255) NOT NULL,
-  CONSTRAINT userEmail UNIQUE (email)
-);
-
-*/

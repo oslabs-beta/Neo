@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@auth/sequelize-adapter": "^1.0.1",
     "@opentelemetry/exporter-trace-otlp-http": "^0.41.0",
     "@opentelemetry/resources": "^1.15.0",
     "@opentelemetry/sdk-node": "^0.41.0",
@@ -23,6 +24,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@vercel/otel": "^0.3.0",
+    "@vercel/postgres": "^0.4.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
@@ -43,6 +45,7 @@
     "puppeteer": "^20.8.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sequelize": "^6.32.1",
     "tailwindcss": "3.3.2",
     "ts-node": "^10.9.1"
   },
@@ -55,6 +58,7 @@
     "@types/pg": "^8.10.2",
     "babel-jest": "^29.6.1",
     "jest": "^29.6.1",
+    "sequelize-cli": "^6.6.1",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   }
