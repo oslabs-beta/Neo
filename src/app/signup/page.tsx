@@ -18,11 +18,11 @@ export default function Register() {
 
     try {
       const response = await axios.post('api/signup', info);
-      alert('Success!')
+      alert('Success!');
 
     } catch (error) {
-      alert('Error: ' + error)
-      console.error('Error in Axios Post: ', error)
+      alert(error);
+      console.error('Error in Axios Post: ', error);
     }
 
   }

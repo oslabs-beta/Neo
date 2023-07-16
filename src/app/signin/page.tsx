@@ -19,7 +19,7 @@ export default function SignIn() {
       alert('Success!')
 
     } catch (error) {
-      alert('Error: ' + error)
+      alert(error)
       console.error('Error in Axios Post: ', error)
     }
 
