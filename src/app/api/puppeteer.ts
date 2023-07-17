@@ -1,6 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 
-export const puppeteerAnalyzer = async (port: number): Promise<void> => {
+export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise<void> => {
 
   try {
 
@@ -14,7 +14,7 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
     while (bool) {
       try {
         await Promise.all([
-          page.goto(`http://localhost:${port}`),
+          page.goto(`http://localhost:${port}${endpoint}`),
           page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
         ]);
         bool = false;

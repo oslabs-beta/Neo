@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '../sqlController/sql';
 
-export async function POST(request: NextResponse) {
+export async function POST(request: NextRequest) {
 
   const { dbClient, dbRelease } = await connectToDatabase();
 

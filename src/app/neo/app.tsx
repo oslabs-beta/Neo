@@ -13,7 +13,8 @@ export default function App() {
   const [chartVision, setChartVision] = useState(false);
   const [inputOption, setInputOption] = useState(true);
   const [updateMessage, setUpdateMessage] = useState('checking files');
-  const [nameDisplay, setNameDisplay] = useState('')
+  const [nameDisplay, setNameDisplay] = useState('');
+  const [port, setPort] = useState(0);
 
   const handleGen = async (e: any) => {
     try {
@@ -143,21 +144,27 @@ export default function App() {
     // console.log('check blobZip: ', blobZip);
     //send blob to server
 
-
-
     setUpdateMessage('Sending Files to Server')
     await axios.post(`/api/fileUpload?email=${session?.user?.email}`, blobZip)
       .then(res => {
-        console.log(res);
+        console.log('response from file upload', res);
+        // set port
+        setPort(res.data.port);
+
         setUpdateMessage('Files Uploaded to Server')
         setTimeout(() => setInputOption(true), 1000)
       })
       .catch((err: Error) => {
-        console.error(err);
+        console.error('error from file upload', err);
         setUpdateMessage('An Error Occurred')
         setTimeout(() => setInputOption(true), 1000)
       });
   }
+
+  // console log new port
+  useEffect(() => {
+    console.log(`${session?.user?.name}'s new port is ${port}`);
+  }, [port]);
 
   // END OF CREATE ZIP FUNCTION
 
