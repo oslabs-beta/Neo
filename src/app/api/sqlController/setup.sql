@@ -4,6 +4,8 @@ CREATE TABLE users (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   email_verified BOOLEAN DEFAULT false,
+  password VARCHAR(255) NOT NULL,
+  port INT,
   image TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
