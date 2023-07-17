@@ -4,6 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import { Pool } from "pg";
 import PostgresAdapter from "../../sqlController/PostgresAdapter";
+import connectToDatabase from "../../sqlController/sql";
+import bcrypt from 'bcrypt';
 
 const pg_URI = 'postgres://gymssbhl:nN2Eg1LZKQ-liUJdig1ZIgVNQTJ_5kvc@mahmud.db.elephantsql.com/gymssbhl';
 
@@ -22,17 +24,44 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
 
-        // query database in actual implementation
+        const { dbClient, dbRelease } = await connectToDatabase();
 
-        // temporary
-        if (credentials?.email === "admin@example.com" && credentials.password === "admin") {
-          return {
-            id: "1",
-            email: "admin@example.com"
-          };
+        try {
+
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error('Missing Fields');
+          }
+
+          console.log(credentials.email, credentials.password);
+
+          // check if in database
+          const user = `
+          SELECT * FROM users
+          WHERE users.email = $1
+          `;
+
+          const response = await dbClient?.query(user, [credentials.email]);
+          console.log('users password', response?.rows[0].password)
+          console.log('response', response?.rows);
+
+          if (response && response.rows.length > 0) {
+            const passMatch = await bcrypt.compare(credentials.password, response.rows[0].password);
+            console.log(passMatch);
+            console.log(typeof credentials.password);
+
+            if (!passMatch) throw new Error('Incorrect Password');
+            else return response.rows[0];
+
+          } else {
+            throw new Error('User does not exist');
+          }
+
+        } catch (error) {
+          throw error;
+        } finally {
+          if (dbClient && dbRelease) dbRelease();
         }
 
-        return null;
       }
     }),
     GithubProvider({

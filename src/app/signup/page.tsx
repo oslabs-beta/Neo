@@ -46,7 +46,7 @@ export default function Register() {
                 <input
                   id="name"
                   name="name"
-                  type="name"
+                  type="text"
                   autoComplete="name"
                   required
                   value={info.name}

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import connectToDatabase from '../sqlController/sql';
 
 export async function POST(request: NextResponse) {
@@ -34,12 +34,15 @@ export async function POST(request: NextResponse) {
     const addUser = `
     INSERT INTO users (name, email, password)
     VALUES ($1, $2, $3)
+    RETURNING *
     `;
 
     const addResponse = await dbClient?.query(addUser, [name, email, hashPass]);
 
     if (addResponse) {
-      return new NextResponse('Successfully created account!', { status: 200 });
+
+      console.log('addresponse: ', addResponse)
+      return NextResponse.json(addResponse.rows[0], { status: 200 });
     }
 
     return new NextResponse('Failed to create account', { status: 500 });
