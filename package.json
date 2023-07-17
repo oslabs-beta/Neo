@@ -54,6 +54,7 @@
     "@babel/preset-env": "^7.22.7",
     "@babel/preset-typescript": "^7.22.5",
     "@types/bcrypt": "^5.0.0",
+    "@types/chart.js": "^2.9.37",
     "@types/jest": "^29.5.3",
     "@types/pg": "^8.10.2",
     "babel-jest": "^29.6.1",

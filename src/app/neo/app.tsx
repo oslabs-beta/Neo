@@ -5,6 +5,7 @@ import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
+import { useSession } from 'next-auth/react';
 
 export default function App() {
   const [data, setData] = useState([50, 50]);
@@ -60,6 +61,8 @@ export default function App() {
       .then(res => console.log(res))
       .catch(err => console.error(err));
   }
+
+  const { data: session } = useSession();
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip(event: any) {
@@ -139,8 +142,11 @@ export default function App() {
     const blobZip = await zip.generateAsync({ type: "blob" })
     // console.log('check blobZip: ', blobZip);
     //send blob to server
+
+
+
     setUpdateMessage('Sending Files to Server')
-    await axios.post('/api/fileUpload', blobZip)
+    await axios.post(`/api/fileUpload?email=${session?.user?.email}`, blobZip)
       .then(res => {
         console.log(res);
         setUpdateMessage('Files Uploaded to Server')

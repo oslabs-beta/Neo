@@ -3,6 +3,7 @@
 import axios from "axios";
 import Link from "next/link"
 import { FormEvent, useState } from "react";
+import { signIn } from 'next-auth/react';
 
 
 export default function Register() {
@@ -18,7 +19,7 @@ export default function Register() {
 
     try {
       const response = await axios.post('api/signup', info);
-      alert('Success!');
+      signIn('credentials', { ...info, redirect: true, callbackUrl: '/neo' });
 
     } catch (error) {
       alert(error);
