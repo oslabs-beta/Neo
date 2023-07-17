@@ -55,11 +55,7 @@ export default function App() {
 
   async function removeFiles(event: any) {
     setClearTreeOption(false);
-    const tree = document.getElementById('deleteStart');
-    while (tree && tree.firstChild) {
-      console.log('to be deleted: ', tree.firstChild)
-      tree.removeChild(tree.firstChild);
-    }
+    setFileStructure([]);
     await axios.get('http://localhost:3000/api/cleanUp')
       .then(res => console.log(res))
       .catch(err => console.error(err));
@@ -212,7 +208,7 @@ export default function App() {
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
         <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><ClearTree removeFiles={removeFiles} clearTreeOption={clearTreeOption}/>
-          <div id="deleteStart">{fileStructure && <FileItem item={fileStructure} onClick={func} />}</div>
+          {fileStructure && <FileItem item={fileStructure} onClick={func} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}
