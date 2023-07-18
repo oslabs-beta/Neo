@@ -1,10 +1,10 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { algoMetrics } from './algoMetrics';
+import { algoMetrics } from './fileUpload/algoMetrics';
 
 
 let algoMetricsResult: any;
 
-export const puppeteerAnalyzer = async (port: number): Promise<any> => {
+export const puppeteerAnalyzer = async (port: number): Promise<void> => {
 
   try {
 
@@ -17,7 +17,6 @@ export const puppeteerAnalyzer = async (port: number): Promise<any> => {
     let bool = true;
     while (bool) {
       try {
-        // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
             await Promise.all([
               page.goto(`http://localhost:${port}`),
               page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
@@ -28,14 +27,6 @@ export const puppeteerAnalyzer = async (port: number): Promise<any> => {
         if (error) await page.reload();
       }
     }
-
-    // wait until parameter waits for page to load
-    // await page.waitForTimeout(9000); // wait for 2 seconds
-    // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
-    // await Promise.all([
-    //   page.goto(`http://localhost:${port}`),
-    //   page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-    // ]);
     
     console.log('navigated to port')
 
@@ -47,7 +38,7 @@ export const puppeteerAnalyzer = async (port: number): Promise<any> => {
     console.log('entries stringified')
     //parsing the object provides the array
     const parseEntries: { [key: string]: any } = JSON.parse(getEntries);
-    // console.log('performance metrics on user app:', parseEntries);
+    console.log('performance metrics on user app:', parseEntries);
 
     algoMetricsResult = await algoMetrics({
       startTime: parseEntries[8].startTime, 
@@ -67,7 +58,3 @@ export const puppeteerAnalyzer = async (port: number): Promise<any> => {
 
   }
 };
-
-
-
-

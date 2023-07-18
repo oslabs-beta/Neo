@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+
   return (
     <div className="flex justify-around items-center text-white" id="content">
       <header id="pageHeaderHome" hidden>Home</header>

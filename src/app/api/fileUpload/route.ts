@@ -3,8 +3,9 @@ import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
 import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { puppeteerAnalyzer } from './puppeteer';
+import { puppeteerAnalyzer } from '../puppeteer';
 import { dockerFuncs } from './dockerController';
+import connectToDatabase from '../sqlController/sql';
 const { AddFiles, BuildAndRun } = dockerFuncs;
 
 //SETUP FOR NEXT-CONNECT ROUTER
@@ -37,8 +38,8 @@ router
 
   //CREATE ZIP
   .post(async (req, event, next) => {
-    const blobZip = await req.blob()
-    const fileBuffer: any = await blobZip.arrayBuffer()
+    const blobZip = await req.blob();
+    const fileBuffer: any = await blobZip.arrayBuffer();
     const data = new DataView(fileBuffer);
     fs.writeFileSync('upload/zip/files.zip', data);
     return next();
@@ -54,7 +55,12 @@ router
     req.locals = {};
 
     // save name of App
-    req.locals.appname = fs.readdirSync('upload/unzip')[0];
+    req.locals.appname = fs.readdirSync('upload/unzip')[0].toLowerCase();
+
+    // save users name
+    const searchParams = new URL(req.url).searchParams;
+    const email = new URLSearchParams(searchParams).get('email');
+    req.locals.email = email;
 
     return next();
   })
@@ -99,39 +105,39 @@ router
     return next()
   })
 
-  // Puppeteer Call
+  // update database with port
   .post(async (req, event, next) => {
 
-    const { port } = req.locals;
-    let metrics = 'test string';
+    const { email, port } = req.locals;
 
-  //   try {
-  //     await new Promise( wait => setTimeout(wait, 1000));
+    const { dbClient, dbRelease } = await connectToDatabase();
 
-  //     // call puppeteerAnalyzer and await results
-  //     metrics = await puppeteerAnalyzer(port as number);
-  //     console.log('from route 111 ' + metrics);
+    try {
 
-  //     return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics: metrics});
-  //   } catch (error) {
-  //     console.log('Error fetching metrics ' + error)
-  //     return NextResponse.json({ message: 'Error fetching metrics' + error })
-  //   }
-  // })
+      const updatePort = `
+      UPDATE users
+      SET port = $1
+      WHERE users.email = $2
+      RETURNING *
+      `;
 
+      const response = await dbClient?.query(updatePort, [port, email]);
+      console.log('response after update', response?.rows[0]);
+
+    } catch (error) {
+      throw new Error('Error Updating database with User and Port')
+    } finally {
+      if (dbClient && dbRelease) dbRelease();
+    }
+    let metrics: any = 'test string';
+    
     await new Promise( wait => setTimeout(wait, 3000));
-    // add 1 second delay in case container isn't fully spun up
-    // await setTimeout(async () => {
-    //   // metrics = await puppeteerAnalyzer(port as number);
-      
-    //   // return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics});
-
-    // }, 1000);
+   
     metrics = await puppeteerAnalyzer(port as number);
-    console.log("line 131 " + metrics)
-    return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics: metrics});
-    // await puppeteerAnalyzer(port as number);
-  });
+
+    return NextResponse.json({ message: 'Files successfully loaded', port, metrics: metrics });
+  
+  })
 
 export async function POST(request: ExtraNextReq, ctx: RequestContext) {
   return router.run(request, ctx);

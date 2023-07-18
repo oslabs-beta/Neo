@@ -21,15 +21,15 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
       if (myChartState) {
         myChartState.destroy();
       }
-      
+
       const donutLabel = {
         id: 'doughnutLabel',
         // beforeDatasetsDraw(chart: Chart, args: any, pluginOptions: any) {
-          beforeDatasetsDraw(chart: Chart) {
+        beforeDatasetsDraw(chart: Chart) {
           const { ctx, data } = chart;
           ctx.save();
           const xCoor = chart.getDatasetMeta(0).data[0].x
-          const yCoor = chart.getDatasetMeta(0).data[0].y 
+          const yCoor = chart.getDatasetMeta(0).data[0].y
           // plug in score number here
           ctx.fillText(overallScore, xCoor, yCoor)
           ctx.textAlign = 'center'
@@ -54,8 +54,8 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
             title: {
               display: true,
               text: donutName,
-              font: {size: idx === 1 ? 24 : 16},
-            }, 
+              font: { size: idx === 1 ? 24 : 16 },
+            },
           },
         },
         plugins: [donutLabel],
@@ -63,7 +63,7 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
 
       const datasets = myChart.data.datasets;
       datasets[0].data = donutData;
-      
+
       if (myChart) {
         myChart.update();
         setMyChartState(myChart as Chart);
@@ -74,12 +74,12 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
   }, [donutData]);
 
   return (
-    <div 
+    <div
       style={
         {
           height: `${csize}px`,
           width: `${csize}px`
-      }}>
+        }}>
       <canvas
         id={`pie-chart${idx}`}
       ></canvas>

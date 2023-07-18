@@ -14,14 +14,14 @@ export default function Card({ name, key, pfp, linkedin, github }: cardProps) {
     <div
       id="card"
       key={`${key}`}
-      className="grid w-3/12 h-max justify-center bg-slate-300 m-5 rounded-lg p-7 transition-all ease-in-out hover:border-zinc-50 hover:border-2"
+      className="grid min-w-fit w-3/12 h-max justify-center bg-slate-300 m-5 rounded-lg p-7 transition-all ease-in-out hover:border-zinc-50 hover:border-2"
     >
       <Link href={linkedin}>
         <Image
           className="rounded-full"
           src={pfp}
-          width={125}
-          height={125}
+          width={200}
+          height={200}
           alt="Image of someone"
         />
       </Link>
