@@ -34,7 +34,7 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
     console.log('entries stringified')
     //parsing the object provides the array
     const parseEntries: { [key: string]: unknown } = JSON.parse(getEntries);
-    console.log('Performance Metrics on User App at :' + endpoint, parseEntries);
+    console.log('Performance Metrics on User App at ' + endpoint, parseEntries);
 
     await browser.close();
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link"
 import { FormEvent, useState } from "react"
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function SignIn() {
 
@@ -24,7 +25,6 @@ export default function SignIn() {
     }
 
   }
-
 
   return (
     <>
@@ -89,6 +89,25 @@ export default function SignIn() {
               </button>
             </div>
           </form>
+
+          <h1 className="text-center my-8 text-white" >Or continue with</h1>
+
+          <div className="flex items-center justify-between gap-4 my-8">
+            <button
+              onClick={() => signIn('github')}
+              className="flex w-full justify-center items-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700"
+            >
+              <Image className='mx-2' src={'/github-logo.png'} height={15} width={15} alt='Github Logo'>
+              </Image> Sign in with Github
+            </button>
+            <button
+              onClick={() => signIn('google')}
+              className="flex w-full justify-center items-center rounded-md bg-white px-3 py-1.5 text-sm leading-6 text-gray-500 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+            >
+              <Image className='mx-2' src={'/google-icon.png'} height={15} width={15} alt='Google Logo'>
+              </Image> Sign in with Google
+            </button>
+          </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Don&apos;t have an account?{' '}

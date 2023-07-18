@@ -7,7 +7,7 @@ import PostgresAdapter from "../../sqlController/PostgresAdapter";
 import connectToDatabase from "../../sqlController/sql";
 import bcrypt from 'bcrypt';
 
-const pg_URI = 'postgres://gymssbhl:nN2Eg1LZKQ-liUJdig1ZIgVNQTJ_5kvc@mahmud.db.elephantsql.com/gymssbhl';
+const pg_URI = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString: pg_URI
@@ -70,7 +70,14 @@ export const authOptions: NextAuthOptions = {
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string
+      clientSecret: process.env.GOOGLE_SECRET as string,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
   secret: process.env.SECRET,

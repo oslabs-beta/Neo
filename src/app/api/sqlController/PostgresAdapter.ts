@@ -42,8 +42,19 @@ export default function PostgresAdapter(pool: Pool): Adapter {
       };
     };
 
+    // const getUserByEmail = async (email: string) => {
+    //   const { rows } = await pool.query(`SELECT * FROM users WHERE email = ${email}`);
+    //   return rows[0]
+    //     ? {
+    //       ...rows[0],
+    //       id: rows[0].id.toString(),
+    //       emailVerified: rows[0].email_verified,
+    //       email: rows[0].email,
+    //     }
+    //     : null;
+    // };
     const getUserByEmail = async (email: string) => {
-      const { rows } = await pool.query(`SELECT * FROM users WHERE email = ${email}`);
+      const { rows } = await pool.query(`SELECT * FROM users WHERE email = $1`, [email]);
       return rows[0]
         ? {
           ...rows[0],
@@ -53,6 +64,7 @@ export default function PostgresAdapter(pool: Pool): Adapter {
         }
         : null;
     };
+
 
     const getUserByAccount = async ({
       provider,
@@ -173,6 +185,9 @@ export default function PostgresAdapter(pool: Pool): Adapter {
     const linkAccount = async (
       account: AdapterAccount
     ): Promise<AdapterAccount | null | undefined> => {
+      const {
+        userId, provider, type, providerAccountId, refresh_token, access_token, expires_at, token_type, scope, id_token
+      } = account;
       await pool.query(`
         INSERT INTO accounts (
             user_id, 
@@ -187,17 +202,17 @@ export default function PostgresAdapter(pool: Pool): Adapter {
             id_token
         ) 
         VALUES (
-            ${account.userId}, 
-            ${account.provider},
-            ${account.type}, 
-            ${account.providerAccountId}, 
-            ${account.refresh_token},
-            ${account.access_token}, 
-            to_timestamp(${account.expires_at}),
-            ${account.token_type},
-            ${account.scope},
-            ${account.id_token}
-        )`);
+            $1, 
+            $2,
+            $3,
+            $4,
+            $5,
+            $6, 
+            to_timestamp($7),
+            $8,
+            $9,
+            $10
+        )`, [userId, provider, type, providerAccountId, refresh_token, access_token, expires_at, token_type, scope, id_token]);
       return account;
     };
 
