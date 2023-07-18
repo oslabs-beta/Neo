@@ -132,8 +132,6 @@ router
     let metrics: any = 'test string';
     
     await new Promise( wait => setTimeout(wait, 3000));
-   
-    metrics = await puppeteerAnalyzer(port as number);
 
     return NextResponse.json({ message: 'Files successfully loaded', port, metrics: metrics });
   

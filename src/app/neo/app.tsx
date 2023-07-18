@@ -17,6 +17,7 @@ export default function App() {
   const [updateMessage, setUpdateMessage] = useState('checking files');
   const [nameDisplay, setNameDisplay] = useState('');
   const [port, setPort] = useState(0);
+  const [appName, setAppName] = useState('');
 
   const handleGen = async (e: any) => {
     try {
@@ -104,6 +105,7 @@ export default function App() {
         // SEPARATE FOLDERS FROM FILES
         const filePath = file.webkitRelativePath;
         const filePathParts = filePath.split('/');
+        setAppName(filePathParts[0]);
         const fileName = filePathParts.pop() as string;
         let currentFolder = newFileStructure;
         console.log(file);
@@ -153,11 +155,6 @@ export default function App() {
         // set port
         setPort(res.data.port);
 
-        console.log("I am here")
-        const fcpScore = parseInt(res.data.metrics.FCPScore)
-        setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
-        setScores([res.data.metrics.FCPScore])
-        setDonutColor([res.data.metrics.FCPColor])
         setUpdateMessage('Files Uploaded to Server')
         setTimeout(() => setInputOption(true), 1000)
       })
@@ -198,12 +195,16 @@ export default function App() {
         if (folderName[0] === '/') {
 
           if (folderName === '/app') folderName = '/';
-          else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the app');
-
-          // else if (folderName === app name) throw new Error('The App name is not a valid)
+          else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the Next app');
+          else if (folderName === appName) throw new Error('The App Name is not a valid input, please try a page within the Next app');
 
           const body = { port, endpoint: folderName };
-          await axios.post('/api/puppeteerHandler', body);
+          const res = await axios.post('/api/puppeteerHandler', body);
+          const fcpScore = parseInt(res.data.metrics.FCPScore)
+          setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
+          setScores([res.data.metrics.FCPScore])
+          setDonutColor([res.data.metrics.FCPColor])
+          
         }
 
       } catch (error) {
