@@ -129,29 +129,13 @@ router
     } finally {
       if (dbClient && dbRelease) dbRelease();
     }
+    let metrics: any = 'test string';
+    
+    await new Promise( wait => setTimeout(wait, 3000));
 
-    // add 1 second delay in case container isn't fully spun up
-    // setTimeout(async () => {
-    //   await puppeteerAnalyzer(port as number);
-    // }, 1000);
-    // await puppeteerAnalyzer(port as number);
-
-    return NextResponse.json({ message: 'Files successfully loaded', port });
+    return NextResponse.json({ message: 'Files successfully loaded', port, metrics: metrics });
+  
   })
-
-// // Puppeteer Call
-// .post(async (req, event, next) => {
-
-//   const { port } = req.locals;
-
-//   // add 1 second delay in case container isn't fully spun up
-//   setTimeout(async () => {
-//     await puppeteerAnalyzer(port as number);
-//   }, 1000);
-//   // await puppeteerAnalyzer(port as number);
-
-//   return NextResponse.json('Files successfully loaded');
-// })
 
 export async function POST(request: ExtraNextReq, ctx: RequestContext) {
   return router.run(request, ctx);

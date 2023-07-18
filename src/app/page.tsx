@@ -7,21 +7,13 @@ export default async function Home() {
     <div className="flex justify-around items-center text-white" id="content">
       <header id="pageHeaderHome" hidden>Home</header>
       <div>
-        <p className="text-3xl">Next</p>
-        <p className="text-3xl">Engine</p>
-        <p className="text-3xl">Optimization</p>
-        <Link href="/neo">
-          <button className="bg-gray-300 text-black w-30 flex flex-row gap-1 justify-between items-center mt-5 py-2 px-3 rounded-full">
-            <Image
-              className="mr-1"
-              src="/play-button.png"
-              width={20}
-              height={20}
-              alt="Play button Icon for App button"
-            />
-            Application
-          </button>
-        </Link>
+        <p className='text-3xl'>Next</p>
+        <p className='text-3xl'>Engine</p>
+        <p className='text-3xl'>Optimization</p>
+        <button className='bg-slate-400 text-black w-30 flex flex-row gap-1 justify-between items-center py-2 px-3 rounded-full'>
+          <Image className='mr-1' src="/play-button.png" width={20} height={20} alt="Play button Icon for App button" />
+          Application
+        </button>
       </div>
       <div>
         <Image

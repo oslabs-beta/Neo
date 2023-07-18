@@ -14,8 +14,9 @@ export async function POST(request: NextRequest) {
       await puppeteerAnalyzer(endpoint, port);
     }, 1000);
 
+    const metrics = await puppeteerAnalyzer('/', port as number);
 
-    return NextResponse.json({ message: 'Puppeteer Analyzer Complete!' });
+    return NextResponse.json({ message: 'Puppeteer Analyzer Complete!', metrics});
 
   } catch (error) {
     throw new Error('Error in Puppeteer Handler');

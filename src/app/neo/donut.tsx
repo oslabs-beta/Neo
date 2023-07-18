@@ -7,9 +7,11 @@ type donutProps = {
   idx: number;
   donutName: string;
   csize: number;
+  overallScore: string;
+  color: string;
 };
 
-export default function Donut({ donutData, idx, donutName, csize }: donutProps) {
+export default function Donut({ donutData, idx, donutName, csize, overallScore, color }: donutProps) {
   const [myChartState, setMyChartState] = useState<Chart | null>(null);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
           const xCoor = chart.getDatasetMeta(0).data[0].x
           const yCoor = chart.getDatasetMeta(0).data[0].y
           // plug in score number here
-          ctx.fillText('100', xCoor, yCoor) // dynamic score update
+          ctx.fillText(overallScore, xCoor, yCoor)
           ctx.textAlign = 'center'
           ctx.font = '20px sans-serif'
         }
@@ -43,7 +45,7 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
           datasets: [
             {
               data: [70, 30],
-              backgroundColor: ['green', 'white'], // add dynamic coloring based on scores
+              backgroundColor: [color, 'white'],
             },
           ],
         },
@@ -67,6 +69,7 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
         setMyChartState(myChart as Chart);
       }
     }
+      
 
   }, [donutData]);
 
