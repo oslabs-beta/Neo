@@ -1,9 +1,7 @@
 // 'use client';
 import App from "./app";
-// import React, { useState } from 'react';
 
-export default function Neo() {
-  // const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
+export default async function Neo() {
 
   return (
     <div>

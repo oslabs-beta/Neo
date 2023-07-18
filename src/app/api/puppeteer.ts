@@ -1,6 +1,6 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 
-export const puppeteerAnalyzer = async (port: number): Promise<void> => {
+export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise<void> => {
 
   try {
 
@@ -13,26 +13,17 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
     let bool = true;
     while (bool) {
       try {
-        // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
-            await Promise.all([
-              page.goto(`http://localhost:${port}`),
-              page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-            ]);
+        await Promise.all([
+          page.goto(`http://localhost:${port}${endpoint}`),
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        ]);
         bool = false;
-        
+
       } catch (error) {
         if (error) await page.reload();
       }
     }
 
-    // wait until parameter waits for page to load
-    // await page.waitForTimeout(9000); // wait for 2 seconds
-    // await page.goto(`http://localhost:${port}`, { waitUntil: 'domcontentloaded' });
-    // await Promise.all([
-    //   page.goto(`http://localhost:${port}`),
-    //   page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-    // ]);
-    
     console.log('navigated to port')
 
     // Perform Metrics Here
@@ -43,7 +34,7 @@ export const puppeteerAnalyzer = async (port: number): Promise<void> => {
     console.log('entries stringified')
     //parsing the object provides the array
     const parseEntries: { [key: string]: unknown } = JSON.parse(getEntries);
-    console.log('performance metrics on user app:', parseEntries);
+    console.log('Performance Metrics on User App at ' + endpoint, parseEntries);
 
     await browser.close();
 
