@@ -1,32 +1,37 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch } from 'react';
 import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
+import { useSession } from 'next-auth/react';
 import ClearTree from './clear-tree'
 
 export default function App() {
-  const [data, setData] = useState([50, 50]);
+  const [data, setData] = useState([[], [50, 50]]);
+  const [scores, setScores] = useState(['0']);
+  const [donutColor, setDonutColor] = useState(['white']);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
   const [inputOption, setInputOption] = useState(true);
   const [updateMessage, setUpdateMessage] = useState('checking files');
-  const [nameDisplay, setNameDisplay] = useState('')
+  const [nameDisplay, setNameDisplay] = useState('');
+  const [port, setPort] = useState(0);
+  const [appName, setAppName] = useState('');
   const [clearTreeOption, setClearTreeOption] = useState(false);
 
   const handleGen = async (e: any) => {
     try {
-      const response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
+      const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       }
       );
-      type objectArrArr = Record<string, string | number>[][];
-      const data: objectArrArr = await response.json()
+      type parsedDataType = Record<string, string | number>[][];
+      const data: parsedDataType = await response.json()
       console.log(data);
       const arr = [];
       for (let i = 0; i < data.length; i++) {
@@ -41,15 +46,15 @@ export default function App() {
       console.log('Error', error)
     }
     setChartVision(true);
-    setData([70, 30])
+    // setData([70, 30])
   }
 
   useEffect(() => {
-    const allCharts = document.getElementById('all-charts')
+    const allCharts: HTMLElement | null = document.getElementById('all-charts');
     if (chartVision === true) {
-      (allCharts as HTMLElement).removeAttribute('hidden')
+      (allCharts as HTMLElement).removeAttribute('hidden');
     } else {
-      allCharts?.setAttribute('hidden', 'true')
+      allCharts?.setAttribute('hidden', 'true');
     }
   }, [chartVision])
 
@@ -60,6 +65,8 @@ export default function App() {
       .then(res => console.log(res))
       .catch(err => console.error(err));
   }
+
+  const { data: session } = useSession();
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip(event: any) {
@@ -98,6 +105,7 @@ export default function App() {
         // SEPARATE FOLDERS FROM FILES
         const filePath = file.webkitRelativePath;
         const filePathParts = filePath.split('/');
+        setAppName(filePathParts[0]);
         const fileName = filePathParts.pop() as string;
         let currentFolder = newFileStructure;
         console.log(file);
@@ -137,22 +145,29 @@ export default function App() {
     const blobZip = await zip.generateAsync({ type: "blob" });
     // console.log('check blobZip: ', blobZip);
     //send blob to server
-    setUpdateMessage('Sending Files to Server');
-    await axios.post('/api/fileUpload', blobZip)
-    .then(res => {
-      console.log(res);
-      setUpdateMessage('Files Uploaded to Server')
-      setTimeout(() => setInputOption(true), 1000)
-    })
-    .catch((err: Error) => {
-      console.error(err);
-      setUpdateMessage('An Error Occurred')
-      setTimeout(() => setInputOption(true), 1000)
-    });
-    setUpdateMessage('Building Tree');
-    setFileStructure(newFileStructure);
-    setClearTreeOption(true);
+    setUpdateMessage('Sending Files to Server')
+    await axios.post('/api/fileUpload${session?.user?.email}', blobZip)
+      .then(res => {
+        console.log('response from file upload', res);
+        // set port
+        setPort(res.data.port);
+        setUpdateMessage('Files Uploaded to Server');
+        setTimeout(() => setInputOption(true), 1000);
+      })
+      .catch((err: Error) => {
+        console.error('error from file upload', err);
+        setUpdateMessage('An Error Occurred')
+        setTimeout(() => setInputOption(true), 1000)
+      });
+      setUpdateMessage('Building Tree');
+      setFileStructure(newFileStructure);
+      setClearTreeOption(true);
   }
+
+  // console log new port
+  useEffect(() => {
+    console.log(`${session?.user?.name}'s new port is ${port}`);
+  }, [port]);
 
   // END OF CREATE ZIP FUNCTION
 
@@ -171,9 +186,31 @@ export default function App() {
     item: FileItem[];
     onClick: (folderName: string) => void;
   }) {
-    const handleClick = (folderName: string) => {
+    const handleClick = async (folderName: string) => {
       setNameDisplay(folderName)
       console.log(folderName)
+
+      try {
+        if (folderName[0] === '/') {
+
+          if (folderName === '/app') folderName = '/';
+          else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the Next app');
+          else if (folderName === appName) throw new Error('The App Name is not a valid input, please try a page within the Next app');
+
+          const body = { port, endpoint: folderName };
+          const res = await axios.post('/api/puppeteerHandler', body);
+          const fcpScore = parseInt(res.data.metrics.FCPScore)
+          setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
+          setScores([res.data.metrics.FCPScore])
+          setDonutColor([res.data.metrics.FCPColor])
+          
+        }
+
+      } catch (error) {
+        console.error('Error in Axios Request to Puppeteer');
+        alert(error)
+      }
+
     };
     return (
       <ul id="fileStructure">
@@ -216,16 +253,19 @@ export default function App() {
         <div id="app-body_line" className="bg-black"></div>
         <div id="app-main" className="flex flex-col justify-center items-center text-black mx-8 my-5">
           {nameDisplay}
+          
           <div id="all-charts" hidden>
+          
             <div id="overall-donut" className='flex justify-center items-center'>
-              <Donut donutData={data} idx={1} donutName={'Overall Score'} csize={250} />
+              <Donut donutData={data[0]} idx={1} donutName={'Overall Score'} csize={250} />
             </div>
             <div id="technical-donuts" className='flex my-10'>
-              <Donut donutData={data} idx={2} donutName={'Performance'} csize={150} />
-              <Donut donutData={data} idx={3} donutName={'Indexability'} csize={150} />
-              <Donut donutData={data} idx={4} donutName={'URL Quality'} csize={150} />
-              <Donut donutData={data} idx={5} donutName={'Markup Validity'} csize={150} />
+              <Donut donutData={data[1]} idx={2} donutName={'First Contentful Paint'} csize={150} overallScore={scores[0]} color={donutColor[0]} />
+              <Donut donutData={data[2]} idx={3} donutName={'Indexability'} csize={150} />
+              <Donut donutData={data[1]} idx={4} donutName={'URL Quality'} csize={150} />
+              <Donut donutData={data[2]} idx={5} donutName={'Markup Validity'} csize={150} />
             </div>
+            {'FCP: ' + data[3] + ' ms'}
           </div>
           <div className='flex'>
             <button
