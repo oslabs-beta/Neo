@@ -146,7 +146,7 @@ export default function App() {
     // console.log('check blobZip: ', blobZip);
     //send blob to server
     setUpdateMessage('Sending Files to Server')
-    await axios.post('/api/fileUpload${session?.user?.email}', blobZip)
+    await axios.post(`/api/fileUpload?email=${session?.user?.email}`, blobZip)
       .then(res => {
         console.log('response from file upload', res);
         // set port
@@ -197,8 +197,9 @@ export default function App() {
           else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the Next app');
           else if (folderName === appName) throw new Error('The App Name is not a valid input, please try a page within the Next app');
 
+          console.log('appname: ', appName);
           const body = { port, endpoint: folderName };
-          const res = await axios.post('/api/puppeteerHandler', body);
+          const res = await axios.post('/api/puppeteerHandler', body)
           const fcpScore = parseInt(res.data.metrics.FCPScore)
           setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
           setScores([res.data.metrics.FCPScore])
