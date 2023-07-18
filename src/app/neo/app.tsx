@@ -1,10 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch } from 'react';
 import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
+import { useSession } from 'next-auth/react';
 
 export default function App() {
   const [data, setData] = useState([50, 50]);
@@ -12,19 +13,20 @@ export default function App() {
   const [chartVision, setChartVision] = useState(false);
   const [inputOption, setInputOption] = useState(true);
   const [updateMessage, setUpdateMessage] = useState('checking files');
-  const [nameDisplay, setNameDisplay] = useState('')
+  const [nameDisplay, setNameDisplay] = useState('');
+  const [port, setPort] = useState(0);
 
   const handleGen = async (e: any) => {
     try {
-      const response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
+      const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       }
       );
-      type objectArrArr = Record<string, string | number>[][];
-      const data: objectArrArr = await response.json()
+      type parsedDataType = Record<string, string | number>[][];
+      const data: parsedDataType = await response.json()
       console.log(data);
       const arr = [];
       for (let i = 0; i < data.length; i++) {
@@ -43,15 +45,15 @@ export default function App() {
   }
 
   useEffect(() => {
-    const allCharts = document.getElementById('all-charts')
+    const allCharts: HTMLElement | null = document.getElementById('all-charts');
     if (chartVision === true) {
-      (allCharts as HTMLElement).removeAttribute('hidden')
+      (allCharts as HTMLElement).removeAttribute('hidden');
     } else {
-      allCharts?.setAttribute('hidden', 'true')
+      allCharts?.setAttribute('hidden', 'true');
     }
   }, [chartVision])
 
-  async function removeFiles(event: any) {
+  async function removeFiles(event: any): Promise<void> {
     const tree = document.getElementById('deleteStart');
     while (tree && tree.firstChild) {
       tree.removeChild(tree.firstChild);
@@ -60,6 +62,8 @@ export default function App() {
       .then(res => console.log(res))
       .catch(err => console.error(err));
   }
+
+  const { data: session } = useSession();
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip(event: any) {
@@ -139,19 +143,28 @@ export default function App() {
     const blobZip = await zip.generateAsync({ type: "blob" })
     // console.log('check blobZip: ', blobZip);
     //send blob to server
+
     setUpdateMessage('Sending Files to Server')
-    await axios.post('/api/fileUpload', blobZip)
+    await axios.post(`/api/fileUpload?email=${session?.user?.email}`, blobZip)
       .then(res => {
-        console.log(res);
+        console.log('response from file upload', res);
+        // set port
+        setPort(res.data.port);
+
         setUpdateMessage('Files Uploaded to Server')
         setTimeout(() => setInputOption(true), 1000)
       })
       .catch((err: Error) => {
-        console.error(err);
+        console.error('error from file upload', err);
         setUpdateMessage('An Error Occurred')
         setTimeout(() => setInputOption(true), 1000)
       });
   }
+
+  // console log new port
+  useEffect(() => {
+    console.log(`${session?.user?.name}'s new port is ${port}`);
+  }, [port]);
 
   // END OF CREATE ZIP FUNCTION
 
@@ -170,9 +183,27 @@ export default function App() {
     item: FileItem[];
     onClick: (folderName: string) => void;
   }) {
-    const handleClick = (folderName: string) => {
+    const handleClick = async (folderName: string) => {
       setNameDisplay(folderName)
       console.log(folderName)
+
+      try {
+        if (folderName[0] === '/') {
+
+          if (folderName === '/app') folderName = '/';
+          else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the app');
+
+          // else if (folderName === app name) throw new Error('The App name is not a valid)
+
+          const body = { port, endpoint: folderName };
+          await axios.post('/api/puppeteerHandler', body);
+        }
+
+      } catch (error) {
+        console.error('Error in Axios Request to Puppeteer');
+        alert(error)
+      }
+
     };
     return (
       <ul id="fileStructure">
