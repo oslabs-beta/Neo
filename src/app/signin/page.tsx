@@ -1,6 +1,5 @@
 'use client'
 
-import axios from "axios";
 import Link from "next/link"
 import { FormEvent, useState } from "react"
 import { signIn } from "next-auth/react";

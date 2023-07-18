@@ -186,9 +186,32 @@ export default function PostgresAdapter(pool: Pool): Adapter {
       account: AdapterAccount
     ): Promise<AdapterAccount | null | undefined> => {
       const {
-        userId, provider, type, providerAccountId, refresh_token, access_token, expires_at, token_type, scope, id_token
+        userId,
+        provider,
+        type,
+        providerAccountId,
+        refresh_token,
+        access_token,
+        expires_at,
+        token_type,
+        scope,
+        id_token
       } = account;
-      await pool.query(`
+
+      const existingAccount = await pool.query(
+        `
+        SELECT *
+        FROM accounts
+        WHERE user_id = $1 AND provider_account_id = $2
+      `,
+        [userId, providerAccountId]
+      );
+
+      if (existingAccount.rows.length > 0) {
+        return existingAccount.rows[0];
+      } else {
+
+        await pool.query(`
         INSERT INTO accounts (
             user_id, 
             provider_id, 
@@ -213,8 +236,9 @@ export default function PostgresAdapter(pool: Pool): Adapter {
             $9,
             $10
         )`, [userId, provider, type, providerAccountId, refresh_token, access_token, expires_at, token_type, scope, id_token]);
-      return account;
-    };
+        return account;
+      };
+    }
 
     const unlinkAccount = async ({
       providerAccountId,

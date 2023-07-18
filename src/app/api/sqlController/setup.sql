@@ -2,9 +2,9 @@
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(255) NOT NULL,
+  password VARCHAR(255),
   email VARCHAR(255) NOT NULL UNIQUE,
   email_verified BOOLEAN DEFAULT false,
-  password VARCHAR(255) NOT NULL,
   port INT,
   image TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
