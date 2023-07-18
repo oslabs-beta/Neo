@@ -6,6 +6,7 @@ import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
 import { useSession } from 'next-auth/react';
+import ClearTree from './clear-tree'
 
 export default function App() {
   const [data, setData] = useState([[], [50, 50]]);
@@ -18,6 +19,7 @@ export default function App() {
   const [nameDisplay, setNameDisplay] = useState('');
   const [port, setPort] = useState(0);
   const [appName, setAppName] = useState('');
+  const [clearTreeOption, setClearTreeOption] = useState(false);
 
   const handleGen = async (e: any) => {
     try {
@@ -56,11 +58,9 @@ export default function App() {
     }
   }, [chartVision])
 
-  async function removeFiles(event: any): Promise<void> {
-    const tree = document.getElementById('deleteStart');
-    while (tree && tree.firstChild) {
-      tree.removeChild(tree.firstChild);
-    }
+  async function removeFiles(event: any) {
+    setClearTreeOption(false);
+    setFileStructure([]);
     await axios.get('http://localhost:3000/api/cleanUp')
       .then(res => console.log(res))
       .catch(err => console.error(err));
@@ -141,28 +141,27 @@ export default function App() {
       }
     }
     //Create styling
-    setUpdateMessage('Building Tree')
-    setFileStructure(newFileStructure);
     //convert to blob
-    const blobZip = await zip.generateAsync({ type: "blob" })
+    const blobZip = await zip.generateAsync({ type: "blob" });
     // console.log('check blobZip: ', blobZip);
     //send blob to server
-
     setUpdateMessage('Sending Files to Server')
     await axios.post(`/api/fileUpload?email=${session?.user?.email}`, blobZip)
       .then(res => {
         console.log('response from file upload', res);
         // set port
         setPort(res.data.port);
-
-        setUpdateMessage('Files Uploaded to Server')
-        setTimeout(() => setInputOption(true), 1000)
+        setUpdateMessage('Files Uploaded to Server');
+        setTimeout(() => setInputOption(true), 1000);
       })
       .catch((err: Error) => {
         console.error('error from file upload', err);
         setUpdateMessage('An Error Occurred')
         setTimeout(() => setInputOption(true), 1000)
       });
+      setUpdateMessage('Building Tree');
+      setFileStructure(newFileStructure);
+      setClearTreeOption(true);
   }
 
   // console log new port
@@ -198,8 +197,9 @@ export default function App() {
           else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the Next app');
           else if (folderName === appName) throw new Error('The App Name is not a valid input, please try a page within the Next app');
 
+          console.log('appname: ', appName);
           const body = { port, endpoint: folderName };
-          const res = await axios.post('/api/puppeteerHandler', body);
+          const res = await axios.post('/api/puppeteerHandler', body)
           const fcpScore = parseInt(res.data.metrics.FCPScore)
           setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
           setScores([res.data.metrics.FCPScore])
@@ -245,8 +245,8 @@ export default function App() {
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><button id="delete-button" className="font-extrabold" onClick={removeFiles}>Clear Tree</button>
-          <div id="deleteStart">{fileStructure && <FileItem item={fileStructure} onClick={func} />}</div>
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><ClearTree removeFiles={removeFiles} clearTreeOption={clearTreeOption}/>
+          {fileStructure && <FileItem item={fileStructure} onClick={func} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
           </button> */}

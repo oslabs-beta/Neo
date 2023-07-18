@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest test --detectOpenHandles"
   },
   "dependencies": {
     "@auth/sequelize-adapter": "^1.0.1",
@@ -58,6 +58,7 @@
     "@types/pg": "^8.10.2",
     "babel-jest": "^29.6.1",
     "jest": "^29.6.1",
+    "jest-dev-server": "^9.0.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   }
