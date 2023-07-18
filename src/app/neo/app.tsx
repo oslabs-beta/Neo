@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch } from 'react';
 import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
@@ -18,15 +18,15 @@ export default function App() {
 
   const handleGen = async (e: any) => {
     try {
-      const response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
+      const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       }
       );
-      type objectArrArr = Record<string, string | number>[][];
-      const data: objectArrArr = await response.json()
+      type parsedDataType = Record<string, string | number>[][];
+      const data: parsedDataType = await response.json()
       console.log(data);
       const arr = [];
       for (let i = 0; i < data.length; i++) {
@@ -45,15 +45,15 @@ export default function App() {
   }
 
   useEffect(() => {
-    const allCharts = document.getElementById('all-charts')
+    const allCharts: HTMLElement | null = document.getElementById('all-charts');
     if (chartVision === true) {
-      (allCharts as HTMLElement).removeAttribute('hidden')
+      (allCharts as HTMLElement).removeAttribute('hidden');
     } else {
-      allCharts?.setAttribute('hidden', 'true')
+      allCharts?.setAttribute('hidden', 'true');
     }
   }, [chartVision])
 
-  async function removeFiles(event: any) {
+  async function removeFiles(event: any): Promise<void> {
     const tree = document.getElementById('deleteStart');
     while (tree && tree.firstChild) {
       tree.removeChild(tree.firstChild);
@@ -183,9 +183,27 @@ export default function App() {
     item: FileItem[];
     onClick: (folderName: string) => void;
   }) {
-    const handleClick = (folderName: string) => {
+    const handleClick = async (folderName: string) => {
       setNameDisplay(folderName)
       console.log(folderName)
+
+      try {
+        if (folderName[0] === '/') {
+
+          if (folderName === '/app') folderName = '/';
+          else if (folderName === '/src') throw new Error('src is not a valid input, please try a page within the app');
+
+          // else if (folderName === app name) throw new Error('The App name is not a valid)
+
+          const body = { port, endpoint: folderName };
+          await axios.post('/api/puppeteerHandler', body);
+        }
+
+      } catch (error) {
+        console.error('Error in Axios Request to Puppeteer');
+        alert(error)
+      }
+
     };
     return (
       <ul id="fileStructure">

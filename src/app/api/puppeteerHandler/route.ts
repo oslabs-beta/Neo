@@ -5,15 +5,20 @@ export async function POST(request: NextRequest) {
 
   try {
 
-    const { endpoint, port } = request.body;
+    const body = await request.json();
+    console.log('request body', body);
+
+    const { endpoint, port }: { endpoint: string, port: number } = body;
+
+    setTimeout(async () => {
+      await puppeteerAnalyzer(endpoint, port);
+    }, 1000);
 
 
-
+    return NextResponse.json({ message: 'Puppeteer Analyzer Complete!' });
 
   } catch (error) {
     throw new Error('Error in Puppeteer Handler');
   }
-
-
 
 }
