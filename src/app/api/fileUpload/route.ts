@@ -103,15 +103,35 @@ router
   .post(async (req, event, next) => {
 
     const { port } = req.locals;
+    let metrics = 'test string';
 
+  //   try {
+  //     await new Promise( wait => setTimeout(wait, 1000));
+
+  //     // call puppeteerAnalyzer and await results
+  //     metrics = await puppeteerAnalyzer(port as number);
+  //     console.log('from route 111 ' + metrics);
+
+  //     return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics: metrics});
+  //   } catch (error) {
+  //     console.log('Error fetching metrics ' + error)
+  //     return NextResponse.json({ message: 'Error fetching metrics' + error })
+  //   }
+  // })
+
+    await new Promise( wait => setTimeout(wait, 3000));
     // add 1 second delay in case container isn't fully spun up
-    setTimeout(async () => {
-      await puppeteerAnalyzer(port as number);
-    }, 1000);
-    // await puppeteerAnalyzer(port as number);
+    // await setTimeout(async () => {
+    //   // metrics = await puppeteerAnalyzer(port as number);
+      
+    //   // return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics});
 
-    return NextResponse.json('Files successfully loaded');
-  })
+    // }, 1000);
+    metrics = await puppeteerAnalyzer(port as number);
+    console.log("line 131 " + metrics)
+    return NextResponse.json({message:'Files successfully loaded', test1: 'test', test2: 'test2', metrics: metrics});
+    // await puppeteerAnalyzer(port as number);
+  });
 
 export async function POST(request: ExtraNextReq, ctx: RequestContext) {
   return router.run(request, ctx);

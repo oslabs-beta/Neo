@@ -7,7 +7,9 @@ import JSZip from 'jszip';
 import Input from './input';
 
 export default function App() {
-  const [data, setData] = useState([50, 50]);
+  const [data, setData] = useState([[], [50, 50]]);
+  const [scores, setScores] = useState(['0']);
+  const [donutColor, setDonutColor] = useState(['white']);
   const [fileStructure, setFileStructure] = useState<null | Array<FileItem> | []>(null);
   const [chartVision, setChartVision] = useState(false);
   const [inputOption, setInputOption] = useState(true);
@@ -25,7 +27,7 @@ export default function App() {
       );
       type objectArrArr = Record<string, string | number>[][];
       const data: objectArrArr = await response.json()
-      console.log(data);
+      console.log('handle gen ln 30: ' + data);
       const arr = [];
       for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < data[i].length; j++) {
@@ -39,7 +41,7 @@ export default function App() {
       console.log('Error', error)
     }
     setChartVision(true);
-    setData([70, 30])
+    // setData([70, 30])
   }
 
   useEffect(() => {
@@ -143,6 +145,11 @@ export default function App() {
     await axios.post('/api/fileUpload', blobZip)
       .then(res => {
         console.log(res);
+        console.log("I am here")
+        const fcpScore = parseInt(res.data.metrics.FCPScore)
+        setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
+        setScores([res.data.metrics.FCPScore])
+        setDonutColor([res.data.metrics.FCPColor])
         setUpdateMessage('Files Uploaded to Server')
         setTimeout(() => setInputOption(true), 1000)
       })
@@ -215,16 +222,19 @@ export default function App() {
         <div id="app-body_line" className="bg-black"></div>
         <div id="app-main" className="flex flex-col justify-center items-center text-black mx-8 my-5">
           {nameDisplay}
+          
           <div id="all-charts" hidden>
+          
             <div id="overall-donut" className='flex justify-center items-center'>
-              <Donut donutData={data} idx={1} donutName={'Overall Score'} csize={250} />
+              <Donut donutData={data[0]} idx={1} donutName={'Overall Score'} csize={250} />
             </div>
             <div id="technical-donuts" className='flex my-10'>
-              <Donut donutData={data} idx={2} donutName={'Performance'} csize={150} />
-              <Donut donutData={data} idx={3} donutName={'Indexability'} csize={150} />
-              <Donut donutData={data} idx={4} donutName={'URL Quality'} csize={150} />
-              <Donut donutData={data} idx={5} donutName={'Markup Validity'} csize={150} />
+              <Donut donutData={data[1]} idx={2} donutName={'First Contentful Paint'} csize={150} overallScore={scores[0]} color={donutColor[0]} />
+              <Donut donutData={data[2]} idx={3} donutName={'Indexability'} csize={150} />
+              <Donut donutData={data[1]} idx={4} donutName={'URL Quality'} csize={150} />
+              <Donut donutData={data[2]} idx={5} donutName={'Markup Validity'} csize={150} />
             </div>
+            {'FCP: ' + data[3] + ' ms'}
           </div>
           <div className='flex'>
             <button
