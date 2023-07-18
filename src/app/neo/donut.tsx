@@ -7,9 +7,11 @@ type donutProps = {
   idx: number;
   donutName: string;
   csize: number;
+  overallScore: string;
+  color: string;
 };
 
-export default function Donut({ donutData, idx, donutName, csize }: donutProps) {
+export default function Donut({ donutData, idx, donutName, csize, overallScore, color }: donutProps) {
   const [myChartState, setMyChartState] = useState<Chart | null>(null);
 
   useEffect(() => {
@@ -19,17 +21,17 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
       if (myChartState) {
         myChartState.destroy();
       }
-      
+
       const donutLabel = {
         id: 'doughnutLabel',
         // beforeDatasetsDraw(chart: Chart, args: any, pluginOptions: any) {
-          beforeDatasetsDraw(chart: Chart) {
+        beforeDatasetsDraw(chart: Chart) {
           const { ctx, data } = chart;
           ctx.save();
           const xCoor = chart.getDatasetMeta(0).data[0].x
-          const yCoor = chart.getDatasetMeta(0).data[0].y 
+          const yCoor = chart.getDatasetMeta(0).data[0].y
           // plug in score number here
-          ctx.fillText('100', xCoor, yCoor)
+          ctx.fillText(overallScore, xCoor, yCoor)
           ctx.textAlign = 'center'
           ctx.font = '20px sans-serif'
         }
@@ -43,7 +45,7 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
           datasets: [
             {
               data: [70, 30],
-              backgroundColor: ['green', 'white'],
+              backgroundColor: [color, 'white'],
             },
           ],
         },
@@ -52,8 +54,8 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
             title: {
               display: true,
               text: donutName,
-              font: {size: idx === 1 ? 24 : 16},
-            }, 
+              font: { size: idx === 1 ? 24 : 16 },
+            },
           },
         },
         plugins: [donutLabel],
@@ -61,22 +63,23 @@ export default function Donut({ donutData, idx, donutName, csize }: donutProps) 
 
       const datasets = myChart.data.datasets;
       datasets[0].data = donutData;
-      
+
       if (myChart) {
         myChart.update();
         setMyChartState(myChart as Chart);
       }
     }
+      
 
   }, [donutData]);
 
   return (
-    <div 
+    <div
       style={
         {
           height: `${csize}px`,
           width: `${csize}px`
-      }}>
+        }}>
       <canvas
         id={`pie-chart${idx}`}
       ></canvas>

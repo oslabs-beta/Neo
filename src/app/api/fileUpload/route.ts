@@ -3,8 +3,9 @@ import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
 import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { puppeteerAnalyzer } from './puppeteer';
+import { puppeteerAnalyzer } from '../puppeteer';
 import { dockerFuncs } from './dockerController';
+import connectToDatabase from '../sqlController/sql';
 const { AddFiles, BuildAndRun } = dockerFuncs;
 
 //SETUP FOR NEXT-CONNECT ROUTER
@@ -37,8 +38,8 @@ router
 
   //CREATE ZIP
   .post(async (req, event, next) => {
-    const blobZip = await req.blob()
-    const fileBuffer: any = await blobZip.arrayBuffer()
+    const blobZip = await req.blob();
+    const fileBuffer: any = await blobZip.arrayBuffer();
     const data = new DataView(fileBuffer);
     fs.writeFileSync('upload/zip/files.zip', data);
     return next();
@@ -55,6 +56,11 @@ router
 
     // save name of App
     req.locals.appname = fs.readdirSync('upload/unzip')[0].toLowerCase();
+
+    // save users name
+    const searchParams = new URL(req.url).searchParams;
+    const email = new URLSearchParams(searchParams).get('email');
+    req.locals.email = email;
 
     return next();
   })
@@ -99,18 +105,36 @@ router
     return next()
   })
 
-  // Puppeteer Call
+  // update database with port
   .post(async (req, event, next) => {
 
-    const { port } = req.locals;
+    const { email, port } = req.locals;
 
-    // add 1 second delay in case container isn't fully spun up
-    setTimeout(async () => {
-      await puppeteerAnalyzer(port as number);
-    }, 1000);
-    // await puppeteerAnalyzer(port as number);
+    const { dbClient, dbRelease } = await connectToDatabase();
 
-    return NextResponse.json('Files successfully loaded');
+    try {
+
+      const updatePort = `
+      UPDATE users
+      SET port = $1
+      WHERE users.email = $2
+      RETURNING *
+      `;
+
+      const response = await dbClient?.query(updatePort, [port, email]);
+      console.log('response after update', response?.rows[0]);
+
+    } catch (error) {
+      throw new Error('Error Updating database with User and Port')
+    } finally {
+      if (dbClient && dbRelease) dbRelease();
+    }
+    let metrics: any = 'test string';
+    
+    await new Promise( wait => setTimeout(wait, 3000));
+
+    return NextResponse.json({ message: 'Files successfully loaded', port, metrics: metrics });
+  
   })
 
 export async function POST(request: ExtraNextReq, ctx: RequestContext) {
