@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
 
     const { endpoint, port }: { endpoint: string, port: number } = body;
 
-    setTimeout(async () => {
-      await puppeteerAnalyzer(endpoint, port);
-    }, 1000);
+    // setTimeout(async () => {
+    //   await puppeteerAnalyzer(endpoint, port);
+    // }, 1000);
 
     const metrics = await puppeteerAnalyzer('/', port as number);
 

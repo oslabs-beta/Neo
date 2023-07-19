@@ -87,19 +87,22 @@ if (metrics.DOMCompletion <= 800) {
 
 //Hydration Metrics
 if (metrics.HydrationTime <= 10) {
+  console.log('in less than 10')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'green'
 }
-else if (metrics.FCP <= 24) {
+else if (metrics.HydrationTime <= 24) {
+  console.log('in less than 24')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: average';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'yellow'
 } else {
+  console.log('in over 24')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: bad';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 

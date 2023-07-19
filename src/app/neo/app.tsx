@@ -225,6 +225,8 @@ export default function App() {
           const domScore = parseInt(res.data.metrics.domScore); // data[2]
           const reqScore = parseInt(res.data.metrics.RequestScore); // data[3]
           const hydScore = parseInt(res.data.metrics.HydrationScore); // data[4]
+          
+          console.log('metrics: ', res.data.metrics);
 
           let overall = 0;
           let count = 0;
