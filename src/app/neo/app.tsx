@@ -159,9 +159,9 @@ export default function App() {
         setUpdateMessage('An Error Occurred')
         setTimeout(() => setInputOption(true), 1000)
       });
-      setUpdateMessage('Building Tree');
-      setFileStructure(newFileStructure);
-      setClearTreeOption(true);
+    setUpdateMessage('Building Tree');
+    setFileStructure(newFileStructure);
+    setClearTreeOption(true);
   }
 
   // console log new port
@@ -201,10 +201,10 @@ export default function App() {
           const body = { port, endpoint: folderName };
           const res = await axios.post('/api/puppeteerHandler', body)
           const fcpScore = parseInt(res.data.metrics.FCPScore)
-          setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
+          setData([[res.data.metrics.FCPNum, 50], [fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
           setScores([res.data.metrics.FCPScore])
           setDonutColor([res.data.metrics.FCPColor])
-          
+
         }
 
       } catch (error) {
@@ -245,7 +245,7 @@ export default function App() {
       </div>
       <div id="app-header_line" className="bg-black rounded-xl"></div>
       <div id="app-body" className="flex">
-        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><ClearTree removeFiles={removeFiles} clearTreeOption={clearTreeOption}/>
+        <div id="app-sidebar" className="flex flex-col ml-10 pb-10 w-[20%] text-black max-h-[65vh] overflow-auto"><ClearTree removeFiles={removeFiles} clearTreeOption={clearTreeOption} />
           {fileStructure && <FileItem item={fileStructure} onClick={func} />}
           {/* <button className="bg-black rounded-md p-2 text-white">
             Add Folder
@@ -254,13 +254,13 @@ export default function App() {
         <div id="app-body_line" className="bg-black"></div>
         <div id="app-main" className="flex flex-col justify-center items-center text-black mx-8 my-5">
           {nameDisplay}
-          
+
           <div id="all-charts" hidden>
-          
+
             <div id="overall-donut" className='flex justify-center items-center'>
               <Donut donutData={data[0]} idx={1} donutName={'Overall Score'} csize={250} />
             </div>
-            <div id="technical-donuts" className='flex my-10'>
+            <div id="technical-donuts" className='flex flex-wrap min-w-fit my-10'>
               <Donut donutData={data[1]} idx={2} donutName={'First Contentful Paint'} csize={150} overallScore={scores[0]} color={donutColor[0]} />
               <Donut donutData={data[2]} idx={3} donutName={'Indexability'} csize={150} />
               <Donut donutData={data[1]} idx={4} donutName={'URL Quality'} csize={150} />

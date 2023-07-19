@@ -83,6 +83,7 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET,
   session: {
     strategy: 'jwt',
+    maxAge: 15 * 60
   },
   debug: process.env.NODE_ENV === 'development',
   adapter: PostgresAdapter(pool),
