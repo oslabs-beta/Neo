@@ -37,7 +37,7 @@ export const dockerFuncs = {
     docker stop ${name}
     docker rm ${name}
     docker build -f ${dockerFilePath} -t ${appname} ${newAppPath}
-    docker run -d -p ${port}:3000 --name ${name} -it ${appname}
+    docker run -d -p ${port}:3000 --rm --stop-timeout 900 --name ${name} -it ${appname} 
     `;
 
     // Build Docker Image and Run Docker Container on Randomized Port
