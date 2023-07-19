@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from 'next/image';
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";;
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 export default async function NavBar() {
@@ -16,9 +16,14 @@ export default async function NavBar() {
             <Link id="navHome" href="/">Home</Link>
             <Link id="navApp" href="/neo">App</Link>
             <Link id="navContact" href="/contact">Contact</Link>
-            <Link className="border-2 border-solid border-white rounded-3xl py-2 px-3 hover:no-underline" id='signIn' href='/signin'>
-              {session ? session.user?.name : 'Sign In'}
-            </Link>
+            {session ? (
+              <Link className="border-2 border-solid border-white bg-black text-white rounded-3xl py-2 px-3 hover:no-underline" id='signOut' href='api/auth/signout'>
+                Sign Out
+              </Link>) : (
+              <Link className="border-2 border-solid border-white bg-black text-white rounded-3xl py-2 px-3 hover:no-underline" id='signIn' href='/signin'>
+                Sign In
+              </Link>)
+            }
           </div>
         </div>
       </div>
