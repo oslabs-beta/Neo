@@ -12,12 +12,19 @@ export default function SignIn() {
     password: ''
   });
 
+  const [display, setDisplay] = useState('hidden');
+
   const logIn = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
 
     try {
-      signIn('credentials', { ...info, redirect: true, callbackUrl: '/neo' });
+      const response = await signIn('credentials', { ...info, redirect: true, callbackUrl: '/neo' });
+      if (response?.error) {
+        console.log('response from signing in', response);
+        console.log(response.error);
+        setDisplay('block')
 
+      }
     } catch (error) {
       alert(error)
       console.error('Error in Sign In: ', error)
@@ -27,11 +34,15 @@ export default function SignIn() {
 
   return (
     <>
+      <header id="pageHeaderSignIn" hidden>Sign-In</header>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
             Sign In
           </h2>
+          <p className={`text-red-500 text-center mt-5 ${display}`}>
+            Please try again
+          </p>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -92,15 +103,15 @@ export default function SignIn() {
           <h1 className="text-center my-8 text-white" >Or continue with</h1>
 
           <div className="flex items-center justify-between gap-4 my-8">
-            <button
-              onClick={() => signIn('github')}
+            {/* <button
+              onClick={() => signIn('github', { callbackUrl: '/neo' })}
               className="flex w-full justify-center items-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700"
             >
               <Image className='mx-2' src={'/github-logo.png'} height={15} width={15} alt='Github Logo'>
               </Image> Sign in with Github
-            </button>
+            </button> */}
             <button
-              onClick={() => signIn('google')}
+              onClick={() => signIn('google', { callbackUrl: '/neo' })}
               className="flex w-full justify-center items-center rounded-md bg-white px-3 py-1.5 text-sm leading-6 text-gray-500 shadow-sm hover:bg-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
             >
               <Image className='mx-2' src={'/google-icon.png'} height={15} width={15} alt='Google Logo'>

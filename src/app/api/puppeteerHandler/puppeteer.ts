@@ -1,5 +1,5 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { algoMetrics } from './fileUpload/algoMetrics';
+import { algoMetrics } from '../fileUpload/algoMetrics';
 
 
 let algoMetricsResult: any;
