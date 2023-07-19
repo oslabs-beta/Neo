@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./extension/assets/perfssr_logo.png" alt="PerfSSR">
+    <img src="./extension/assets/perfssr_logo.png" alt="NEO">
 </p>
 
 # Next Engine Optimization
