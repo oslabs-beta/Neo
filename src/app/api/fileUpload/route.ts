@@ -3,7 +3,7 @@ import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
 import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { puppeteerAnalyzer } from '../puppeteer';
+import { puppeteerAnalyzer } from '../puppeteerHandler/puppeteer';
 import { dockerFuncs } from './dockerController';
 import connectToDatabase from '../sqlController/sql';
 const { AddFiles, BuildAndRun } = dockerFuncs;
@@ -130,11 +130,11 @@ router
       if (dbClient && dbRelease) dbRelease();
     }
     let metrics: any = 'test string';
-    
-    await new Promise( wait => setTimeout(wait, 3000));
+
+    await new Promise(wait => setTimeout(wait, 3000));
 
     return NextResponse.json({ message: 'Files successfully loaded', port, metrics: metrics });
-  
+
   })
 
 export async function POST(request: ExtraNextReq, ctx: RequestContext) {
