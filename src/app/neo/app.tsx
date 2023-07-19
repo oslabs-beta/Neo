@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, Dispatch } from 'react';
+import { useState, useEffect, Dispatch, useRef } from 'react';
 import Donut from './donut';
 import DoughnutChart from './donut';
 import axios from 'axios';
@@ -179,7 +179,7 @@ export default function App() {
 
   // console log new port
   useEffect(() => {
-    console.log(`${session?.user?.name}'s new port is ${port}`);
+    console.log(`${session?.user?.name ? session?.user?.name : session?.user?.email}'s new port is ${port}`);
   }, [port]);
 
   // END OF CREATE ZIP FUNCTION
@@ -274,8 +274,8 @@ export default function App() {
           ]);
           setDonutMetrics([
             res.data.metrics.FCPNum,
-            res.data.metrics.RequestNum,
             res.data.metrics.domCompleteNum,
+            res.data.metrics.RequestNum,
             res.data.metrics.HydrationNum,
           ]);
         }
@@ -359,48 +359,63 @@ export default function App() {
                 color={donutColor[0]}
               />
             </div>
-            <div id="technical-donuts" className="flex flex-wrap min-w-fit justify-around my-10">
-              <Donut
-                donutData={data[1]}
-                idx={2}
-                donutName={'First Contentful Paint'}
-                csize={150}
-                overallScore={scores[1]}
-                color={donutColor[1]}
-              />
-              <Donut
-                donutData={data[2]}
-                idx={3}
-                donutName={'DOM Completion'}
-                csize={150}
-                overallScore={scores[2]}
-                color={donutColor[2]}
-              />
-              <Donut
-                donutData={data[3]}
-                idx={4}
-                donutName={'Request Time'}
-                csize={150}
-                overallScore={scores[3]}
-                color={donutColor[3]}
-              />
-              <Donut
-                donutData={data[4]}
-                idx={5}
-                donutName={'Hydration Time'}
-                csize={150}
-                overallScore={scores[4]}
-                color={donutColor[4]}
-              />
-            </div>
-            <div className="metricsBox flex justify-between items-center">
-              <div>{'FCP: ' + donutMetrics[0] + ' ms'}</div>
+            <div id="technical-donuts" className="flex flex-wrap min-w-fit justify-around items-center my-10">
+              {scores[1] !== undefined ?
+                (<div className='flex flex-col gap-2 justify-center items-center'>
+                  <Donut
+                    donutData={data[1]}
+                    idx={2}
+                    donutName={'First Contentful Paint'}
+                    csize={150}
+                    overallScore={scores[1]}
+                    color={donutColor[1]}
+                  />
+                  <div>
+                    {'FCP: ' + donutMetrics[0] + ' ms'}
+                  </div>
+                </div>) : null
+              }
+              {scores[2] !== undefined ?
+                (<div className='flex flex-col gap-2 justify-center items-center'>
+                  <Donut
+                    donutData={data[2]}
+                    idx={3}
+                    donutName={'DOM Completion'}
+                    csize={150}
+                    overallScore={scores[2]}
+                    color={donutColor[2]}
+                  />
 
-              <div>{'DC: ' + donutMetrics[1] + ' ms'}</div>
+                  <div>{'DC: ' + donutMetrics[1] + ' ms'}</div>
+                </div>) : null
+              }
+              {scores[3] !== undefined ?
+                (<div className='flex flex-col gap-2 justify-center items-center'>
+                  <Donut
+                    donutData={data[3]}
+                    idx={4}
+                    donutName={'Request Time'}
+                    csize={150}
+                    overallScore={scores[3]}
+                    color={donutColor[3]}
+                  />
 
-              <div>{'RT: ' + donutMetrics[2] + ' ms'}</div>
-
-              <div>{'HT: ' + donutMetrics[3] + ' ms'}</div>
+                  <div>{'RT: ' + donutMetrics[2] + ' ms'}</div>
+                </div>) : null
+              }
+              {scores[4] !== undefined ?
+                (<div className='flex flex-col gap-2 justify-center items-center'>
+                  <Donut
+                    donutData={data[4]}
+                    idx={5}
+                    donutName={'Hydration Time'}
+                    csize={150}
+                    overallScore={scores[4]}
+                    color={donutColor[4]}
+                  />
+                  <div>{'HT: ' + donutMetrics[3] + ' ms'}</div>
+                </div>) : null
+              }
             </div>
           </div>
           {port !== 0 && nameDisplay !== '' ?
@@ -434,7 +449,7 @@ export default function App() {
           }
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
