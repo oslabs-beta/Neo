@@ -41,7 +41,6 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
         type: 'doughnut',
         data: {
           // label: 'Overall',
-          labels: ['Green'],
           datasets: [
             {
               data: [70, 30],

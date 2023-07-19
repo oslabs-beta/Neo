@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     const { endpoint, port }: { endpoint: string, port: number } = body;
 
-    const metrics = await puppeteerAnalyzer('/', port as number);
+    const metrics = await puppeteerAnalyzer(endpoint, port as number);
 
     return NextResponse.json({ message: 'Puppeteer Analyzer Complete!', metrics });
 
