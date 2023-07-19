@@ -3,7 +3,6 @@ import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
 import fs from 'fs';
 import * as fsX from 'fs-extra';
-import { puppeteerAnalyzer } from '../puppeteerHandler/puppeteer';
 import { dockerFuncs } from './dockerController';
 import connectToDatabase from '../sqlController/sql';
 const { AddFiles, BuildAndRun } = dockerFuncs;

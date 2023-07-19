@@ -17,10 +17,10 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
     let bool = true;
     while (bool) {
       try {
-            await Promise.all([
-              page.goto(`http://localhost:${port}${endpoint}`),
-              page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-            ]);
+        await Promise.all([
+          page.goto(`http://localhost:${port}${endpoint}`),
+          page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+        ]);
         bool = false;
       } catch (error) {
         if (error) await page.reload();
@@ -61,7 +61,7 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
         hydrationTotal = filteredEntries[i].duration
       }
     }
-    
+
     algoMetricsResult = await algoMetrics({
       // startTime: parseEntries[8].startTime, 
       // responseStart: parseEntries[0].responseStart, 
