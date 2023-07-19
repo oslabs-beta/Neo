@@ -201,20 +201,22 @@ export default function App() {
     onClick: (folderName: string) => void;
   }) {
     const handleClick = async (folderName: string) => {
-      setNameDisplay(folderName);
-      console.log(folderName);
 
       try {
         if (folderName[0] === '/') {
+
           if (folderName === '/app') folderName = '/';
           else if (folderName === '/src')
             throw new Error(
               'src is not a valid input, please try a page within the Next app'
             );
-          else if (folderName === appName)
+          else if (folderName === '/' + appName)
             throw new Error(
-              'The App Name is not a valid input, please try a page within the Next app'
+              `Your App Name '${appName}' is not a valid input, please try a page within the Next app`
             );
+
+          setNameDisplay('/' === folderName ? 'Home Page' : folderName.slice(1));
+          console.log(folderName);
 
           console.log('appname: ', appName);
           const body = { port, endpoint: folderName };
@@ -251,7 +253,7 @@ export default function App() {
             [hydScore, 100 - hydScore],
           ]);
           setScores([
-            overallScore,
+            +overallScore.toFixed(2),
             res.data.metrics.FCPScore,
             res.data.metrics.domScore,
             res.data.metrics.RequestScore,
@@ -340,10 +342,9 @@ export default function App() {
         <div id="app-body_line" className="bg-black"></div>
         <div
           id="app-main"
-          className="flex flex-col justify-center items-center text-black mx-8 my-5"
+          className="flex flex-col justify-center items-center text-black mx-8 my-5 grow"
         >
           {nameDisplay}
-
           <div id="all-charts" hidden>
             <div
               id="overall-donut"
@@ -358,7 +359,7 @@ export default function App() {
                 color={donutColor[0]}
               />
             </div>
-            <div id="technical-donuts" className="flex my-10">
+            <div id="technical-donuts" className="flex flex-wrap min-w-fit justify-around my-10">
               <Donut
                 donutData={data[1]}
                 idx={2}
@@ -402,25 +403,35 @@ export default function App() {
               <div>{'HT: ' + donutMetrics[3] + ' ms'}</div>
             </div>
           </div>
-          <div className="flex">
-            <button
-              id="handleGen"
-              className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
-              onClick={handleGen}
-            >
-              Generate
-            </button>
-            <button
-              id="reset"
-              className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
-              onClick={() => {
-                setNameDisplay('');
-                setChartVision(false);
-              }}
-            >
-              Reset
-            </button>
-          </div>
+          {port !== 0 && nameDisplay !== '' ?
+            (<div className="flex">
+              <button
+                id="handleGen"
+                className="bg-black rounded-md p-2 mt-5 mr-5 text-white"
+                onClick={handleGen}
+              >
+                Generate
+              </button>
+              <button
+                id="reset"
+                className="bg-black rounded-md p-2 mt-5 ml-5 text-white"
+                onClick={() => {
+                  setNameDisplay('');
+                  setChartVision(false);
+                }}
+              >
+                Reset
+              </button>
+            </div>) : (port === 0 ? (
+              <div className='flex justify-center items-center'>
+                <p>Please Upload Your Next JS App</p>
+              </div>
+            ) : (
+              <div>
+                Please Choose a Page on Your Next JS App
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
