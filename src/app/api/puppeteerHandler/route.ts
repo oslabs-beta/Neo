@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { puppeteerAnalyzer } from './puppeteer';
+import { puppeteerAnalyzer } from '../puppeteer';
 
 export async function POST(request: NextRequest) {
 
