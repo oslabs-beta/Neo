@@ -1,4 +1,4 @@
-import { exec } from 'child_process'
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs'
 const execSync = promisify(exec);
@@ -37,7 +37,7 @@ export const dockerFuncs = {
     docker stop ${name}
     docker rm ${name}
     docker build -f ${dockerFilePath} -t ${appname} ${newAppPath}
-    docker run -d -p ${port}:3000 --rm --stop-timeout 900 --name ${name} -it ${appname} 
+    docker run -d -p ${port}:3000 --rm --name ${name} -it ${appname} 
     `;
 
     // Build Docker Image and Run Docker Container on Randomized Port
@@ -50,9 +50,19 @@ export const dockerFuncs = {
       throw error;
     }
 
-
     console.log('Finished building the image and deploying the container!');
     console.log('Deployed at port ' + port);
+
+    // stop after certain period of time
+    const dockerStop: string = `sleep 900 && docker stop ${name} && docker rmi ${appname} &`;
+    exec(dockerStop, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+    })
   }
 
 }

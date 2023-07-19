@@ -45,7 +45,7 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
     let resStartTime: number = 0;
     let FCP: number = 0;
     let reqTotal: number = 0;
-    let hydrationTotal: number = 0
+    let hydrationTotal: number = 0;
     let domCompleteTime: number = 0
 
     for (let i = 0; i < filteredEntries.length; i++) {
