@@ -22,12 +22,11 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
               page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
             ]);
         bool = false;
-        
       } catch (error) {
         if (error) await page.reload();
       }
     }
-    
+
     console.log('navigated to port')
 
     // Perform Metrics Here
