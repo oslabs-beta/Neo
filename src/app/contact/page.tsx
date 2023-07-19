@@ -19,15 +19,15 @@ export default function Contact() {
   ];
 
   const linkedinUrls: string[] = [
-    'https://www.linkedin.com/in/tomteaches/',
+    'https://www.linkedin.com/in/nguyentomt/',
     'https://www.linkedin.com/in/justinshim/',
     'https://www.linkedin.com/in/niteshsunku/',
     'https://www.linkedin.com/in/donald-twiford-13731a118/',
     'https://www.linkedin.com/in/bensonzhen/',
-  ];
+git   ];
 
   const githubUrls: string[] = [
-    'https://github.com/tomtnguyen88',
+    'https://github.com/nguyentomt',
     'https://github.com/slip4k',
     'https://github.com/nsunku99',
     'https://github.com/KrankyKnight',

@@ -91,10 +91,8 @@ export function algoMetrics(metrics: any) {
     metricsObj.domColor = 'red';
   }
 
-<<<<<<< HEAD
 //Hydration Metrics
 if (metrics.HydrationTime <= 10) {
-  console.log('in less than 10')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
@@ -102,44 +100,17 @@ if (metrics.HydrationTime <= 10) {
   metricsObj.HydrationColor = 'green'
 }
 else if (metrics.HydrationTime <= 24) {
-  console.log('in less than 24')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: average';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'yellow'
 } else {
-  console.log('in over 24')
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: bad';
   metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'red'
 }
-=======
-  //Hydration Metrics
-  if (metrics.HydrationTime <= 10) {
-    metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
-    metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-    let hydrationRoundScore = Math.round(metrics.HydrationTime)
-    metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-    metricsObj.HydrationColor = 'green'
-  }
-  else if (metrics.HydrationTime <= 24) {
-    metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: average';
-    metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-    let hydrationRoundScore = Math.round(metrics.HydrationTime)
-    metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-    metricsObj.HydrationColor = 'yellow'
-  } else {
-    metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: bad';
-    metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-    let hydrationRoundScore = Math.round(metrics.HydrationTime)
-    metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-    metricsObj.HydrationColor = 'red'
-  }
->>>>>>> a05763f6c9d2265f3e46fbcdb2b12838208465a1
-
-  console.log(metricsObj);
   return metricsObj;
 }
