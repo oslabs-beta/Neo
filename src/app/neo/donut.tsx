@@ -40,6 +40,8 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
       const myChart = new Chart(chartRef, {
         type: 'doughnut',
         data: {
+          // label: 'Overall',
+          labels: ['Green'],
           datasets: [
             {
               data: [70, 30],

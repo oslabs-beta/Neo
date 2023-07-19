@@ -1,34 +1,157 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+    <img src="./extension/assets/perfssr_logo.png" alt="PerfSSR">
+</p>
 
-## Getting Started
+# Next Engine Optimization
 
-First, run the development server:
+NEO is an open-source Chrome Developer Tool that enhances performance and observability for Next.js applications. It offers real-time performance analytics, providing valuable and comprehensive insights into various aspects of the application.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+![perfssr](./assets/devtool-sample.gif?raw=true "Title")
+
+---
+
+## Tech Stack
+
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![NPM](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![GoogleChrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)
+![MUI](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Webpack](https://img.shields.io/badge/webpack-%238DD6F9.svg?style=for-the-badge&logo=webpack&logoColor=black)
+![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![Babel](https://img.shields.io/badge/Babel-F9DC3e?style=for-the-badge&logo=babel&logoColor=black)
+![eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white)
+
+---
+
+## Motivation
+
+Fetches made server-side get logged in your terminal not the browser. PerfSSR Dev Tool solves this by showing server-side fetch requests in browser alongside the Chrome Network tab.
+
+Next.js already instruments using [OpenTelemetry](https://nextjs.org/docs/app/building-your-application/optimizing/open-telemetry) for us out of the box so we can just access their built-in spans.
+
+Credit to [NetPulse](https://github.com/oslabs-beta/NetPulse) for this idea.
+Credit to [ReaPer](https://github.com/oslabs-beta/ReaPer) and [Reactime](https://github.com/open-source-labs/reactime) for the idea of accessing render times via React Dev Tool hooks. 
+
+
+
+
+---
+
+## Setup
+
+### Prerequisites
+
+1. [Google Chrome](https://www.google.com/chrome/)
+2. Ensure you have [React Dev Tools](https://react.dev/learn/react-developer-tools) installed
+3. In your project directory `npm install perfssr --save-dev`
+
+    and additional OpenTelemtry dependecies 
+
+    ```javascript
+    npm i --save-dev @opentelemetry/exporter-trace-otlp-http @opentelemetry/resources @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/semantic-conventions
+    ```
+
+4. Install our [PerfSSR Chrome Extension](#chrome-extension-installation)
+5. As of the current Next.js version [13.4.4], [instrumentation](https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation) is an experimental hook so it must be included in the `next.config.js` file. Add the following code to your next config object.
+
+   ```javascript
+   experimental: {
+     instrumentationHook: true
+   }
+   ```
+
+6. Create a file in your project root directory called `instrumentation.ts`. This file will be loaded when Next.js dev server runs and sees that instrumentation is enabled. Within this file we need to import a file that we'll be creating in the next step that starts tracing the Next.js application
+
+   ```javascript
+   export async function register() {
+     //OpenTelemetry APIs are not compatible with edge runtime
+     //need to only import when our runtime is nodejs
+     if (process.env.NEXT_RUNTIME === "nodejs") {
+       //Import the script that will start tracing the Next.js application
+       //In our case it is perfssr.ts
+       //Change it to your own file name if you named it something else
+       await import("./perfssr");
+     }
+   }
+   ```
+
+7. Create another file [.ts or .js] to your project root directory this can be named anything you'd like. We have ours called `perfssr.ts`
+
+   1. Inside `perfssr.ts` copy and paste this block of code
+
+   ```javascript
+   import { NodeSDK } from "@opentelemetry/sdk-node";
+   import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+   import { Resource } from "@opentelemetry/resources";
+   import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
+   import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-node";
+
+   const sdk = new NodeSDK({
+     resource: new Resource({
+       [SemanticResourceAttributes.SERVICE_NAME]: "next-app",
+     }),
+
+     spanProcessor: new SimpleSpanProcessor(
+       new OTLPTraceExporter({
+         //all traces exported to express server on port 4000
+         url: `http://localhost:4000`,
+       })
+     ),
+   });
+
+   sdk.start();
+
+   
+
+8. Create a `.env` file in the root of your project directory. By default Next.js only creates spans for the API routes, but we want more information than that! To open it up, Next.js looks for a value set in `process.env` Add the line `NEXT_OTEL_VERBOSE=1` to your `.env` file.
+
+9. Include another script line to your `package.json` file
+
+```javascript
+    "perfssr": "node ./node_modules/perfssr/server.js & next dev"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+10. Run PerfSSR by running the command `npm run perfssr` within your terminal.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Chrome Extension Installation
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Clone the PerfSSR repo onto your local machine
 
-## Learn More
+```
+git clone https://github.com/oslabs-beta/perfSSR.git
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies and build the PerfSSR application locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npm install
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. Add PerfSSR to your Chrome extensions
 
-## Deploy on Vercel
+- Navigate to chrome://extensions
+- Select Load Unpacked
+- Turn on 'Allow access to file URLs' in extension details
+- Choose PerfSSR/dist
+- Navigate to your application in development mode
+- Open up your project in Google Chrome
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Navigate to the PerfSSR panel. Click on the **Start PerfSSR** button will automatically refreshes the page and starts the extraction of performance data of the currently inspected webpage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Click on **Regenerate Metrics** will refresh the page to get updated rendering data
+- Click on **Clear Network Data** under the Server-side Fetching Summary table will clear all the current requests logged so far
+
+**Note**: PerfSSR is intended for analyzing and providing performance insights into Next.js applications **in development mode** running on `localhost:3000`
+
+## Examples
+
+To see examples of how to set up your app, we've included a sample app in the `examples` folder.
+
+## Contributors
