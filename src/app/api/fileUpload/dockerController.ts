@@ -29,12 +29,16 @@ export const dockerFuncs = {
 
   },
 
-  BuildAndRun: async ({ appname, newAppPath, dockerFilePath, port }: { [key: string]: unknown }): Promise<void> => {
+  BuildAndRun: async ({ appname, newAppPath, dockerFilePath, port, email }: { [key: string]: unknown }): Promise<void> => {
+
+    const name = (email as string).replace('@', '.');
 
     const dockerSetup: string = `
-  docker build -f ${dockerFilePath} -t ${appname} ${newAppPath}
-  docker run -d -p ${port}:3000 ${appname}
-  `;
+    docker stop ${name}
+    docker rm ${name}
+    docker build -f ${dockerFilePath} -t ${appname} ${newAppPath}
+    docker run -d -p ${port}:3000 --name ${name} -it ${appname}
+    `;
 
     // Build Docker Image and Run Docker Container on Randomized Port
     try {
@@ -46,9 +50,9 @@ export const dockerFuncs = {
       throw error;
     }
 
+
     console.log('Finished building the image and deploying the container!');
     console.log('Deployed at port ' + port);
-
   }
 
 }
