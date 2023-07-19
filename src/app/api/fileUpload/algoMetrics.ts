@@ -21,21 +21,21 @@ console.log(metrics);
 // FCP metrics
 if (metrics.FCP <= 1800) {
   metricsObj.FCP = 'First contentful paint: ' + metrics.FCP + ' rating: good';
-  metricsObj.FCPNum = metrics.FCP;
-  let roundScore = Math.round(metrics.FCP / 100) * 100
+  metricsObj.FCPNum = Math.round(metrics.FCP * 100) / 100; // round to the nearest hundredth
+  let roundScore = Math.round(metrics.FCP / 100) * 100 // round to the nearest 100
   console.log(roundScore);
   metricsObj.FCPScore = obj[roundScore];
   metricsObj.FCPColor = 'green'
 }
 else if (metrics.FCP <= 3000) {
   metricsObj.FCP = 'First contentful paint: ' + metrics.FCP + ' rating: average';
-  metricsObj.FCPNum = metrics.FCP;
+  metricsObj.FCPNum = Math.round(metrics.FCP * 100) / 100;
   let roundScore = Math.round(metrics.FCP / 100) * 100
   metricsObj.FCPScore = obj[roundScore];
   metricsObj.FCPColor = 'yellow'
 } else {
   metricsObj.FCP = 'First contentful paint: ' + metrics.FCP + ' rating: bad';
-  metricsObj.FCPNum = metrics.FCP;
+  metricsObj.FCPNum = Math.round(metrics.FCP * 100) / 100;
   let roundScore = Math.round(metrics.FCP / 100) * 100
   metricsObj.FCPScore = obj[roundScore];
   metricsObj.FCPColor = 'red'
@@ -43,19 +43,19 @@ else if (metrics.FCP <= 3000) {
 
 if (metrics.RequestTime <= 2000) {
   metricsObj.RequestTime = 'Total Request Time' + metrics.RequestTime + ' rating: good';
-  metricsObj.RequestNum = metrics.RequestTime;
+  metricsObj.RequestNum = Math.round(metrics.RequestTime * 100) / 100;
   let reqRoundScore = Math.round(metrics.RequestTime / 100) * 100
   metricsObj.RequestScore = obj[reqRoundScore];
   metricsObj.RequestColor = 'green'
 } else if (metrics.RequestTime <= 3500) {
   metricsObj.RequestTime = 'Total Request Time' + metrics.RequestTime + ' rating: average';
-  metricsObj.RequestNum = metrics.RequestTime;
+  metricsObj.RequestNum = Math.round(metrics.RequestTime * 100) / 100;
   let reqRoundScore = Math.round(metrics.RequestTime / 100) * 100
   metricsObj.RequestScore = obj[reqRoundScore];
   metricsObj.RequestColor = 'yellow'
 } else {
   metricsObj.RequestTime = 'Total Request Time' + metrics.RequestTime + ' rating: average';
-  metricsObj.RequestNum = metrics.RequestTime;
+  metricsObj.RequestNum = Math.round(metrics.RequestTime * 100) / 100;
   let reqRoundScore = Math.round(metrics.RequestTime / 100) * 100
   metricsObj.RequestScore = obj[reqRoundScore];
   metricsObj.RequestColor = 'red'
@@ -63,45 +63,45 @@ if (metrics.RequestTime <= 2000) {
 
 
 // DOM Score metrics
-if (metrics.domComplete <= 800) {
-  metricsObj.domComplete = 'DOM Completion time: ' + metrics.domComplete + ' rating: good';
-  metricsObj.domCompleteNum = metrics.domComplete;
-  let roundDom = Math.round(metrics.domComplete / 100) * 100;
+if (metrics.DOMCompletion <= 800) {
+  metricsObj.domComplete = 'DOM Completion time: ' + metrics.DOMCompletion + ' rating: good';
+  metricsObj.domCompleteNum = Math.round(metrics.DOMCompletion * 100) / 100;
+  let roundDom = Math.round(metrics.DOMCompletion / 100) * 100;
   console.log('roundDom: ' + roundDom);
   roundDom < 300 ? roundDom = 300 : null;
-  metricsObj.domScore = domObj[roundDom];
+  metricsObj.domScore = obj[roundDom];
   metricsObj.domColor = 'green';
-} else if (metrics.domComplete <= 1300) {
-  metricsObj.domComplete = 'DOM Completion time: ' + metrics.domComplete + ' rating: average';
-  metricsObj.domCompleteNum = metrics.domComplete;
-  let roundDom = Math.round(metrics.domComplete / 100) * 100;
-  metricsObj.domScore = domObj[roundDom];
+} else if (metrics.DOMCompletion <= 1300) {
+  metricsObj.domComplete = 'DOM Completion time: ' + metrics.DOMCompletion + ' rating: average';
+  metricsObj.domCompleteNum = Math.round(metrics.DOMCompletion * 100) / 100
+  let roundDom = Math.round(metrics.DOMCompletion / 100) * 100;
+  metricsObj.domScore = obj[roundDom];
   metricsObj.domColor = 'yellow';
 } else {
-  metricsObj.domComplete = 'DOM Completion time: ' + metrics.domComplete + ' rating: bad';
-  metricsObj.domCompleteNum = metrics.domComplete;
-  let roundDom = Math.round(metrics.domComplete / 100) * 100;
-  metricsObj.domScore = domObj[roundDom];
+  metricsObj.domComplete = 'DOM Completion time: ' + metrics.DOMCompletion + ' rating: bad';
+  metricsObj.domCompleteNum = Math.round(metrics.DOMCompletion * 100) / 100
+  let roundDom = Math.round(metrics.DOMCompletion / 100) * 100;
+  metricsObj.domScore = obj[roundDom];
   metricsObj.domColor = 'red';
 }
 
 //Hydration Metrics
 if (metrics.HydrationTime <= 10) {
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
-  metricsObj.HydrationNum = metrics.HydrationTime;
+  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'green'
 }
 else if (metrics.FCP <= 24) {
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: average';
-  metricsObj.HydrationNum = metrics.HydrationTime;
+  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'yellow'
 } else {
   metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: bad';
-  metricsObj.HydrationNum = metrics.HydrationTime;
+  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
   let hydrationRoundScore = Math.round(metrics.HydrationTime) 
   metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
   metricsObj.HydrationColor = 'red'

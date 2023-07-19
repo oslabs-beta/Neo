@@ -13,6 +13,7 @@ export default function App() {
   const [data, setData] = useState([[], [50, 50]]);
   const [scores, setScores] = useState(['0']);
   const [donutColor, setDonutColor] = useState(['white']);
+  const [donutMetrics, setDonutMetrics] = useState([0, 0, 0, 0]);
   const [fileStructure, setFileStructure] = useState<
     null | Array<FileItem> | []
   >(null);
@@ -224,6 +225,7 @@ export default function App() {
           const domScore = parseInt(res.data.metrics.domScore); // data[2]
           const reqScore = parseInt(res.data.metrics.RequestScore); // data[3]
           const hydScore = parseInt(res.data.metrics.HydrationScore); // data[4]
+
           let overall = 0;
           let count = 0;
           if (hydScore) {
@@ -269,6 +271,12 @@ export default function App() {
             res.data.metrics.domColor,
             res.data.metrics.RequestColor,
             res.data.metrics.HydrationColor,
+          ]);
+          setDonutMetrics([
+            res.data.metrics.FCPNum,
+            res.data.metrics.RequestNum,
+            res.data.metrics.domCompleteNum,
+            res.data.metrics.HydrationNum,
           ]);
         }
       } catch (error) {
@@ -385,7 +393,15 @@ export default function App() {
                 color={donutColor[4]}
               />
             </div>
-            {'FCP: ' + data[1] + ' ms'}
+            <div className="metricsBox flex justify-between items-center">
+              <div>{'FCP: ' + donutMetrics[0] + ' ms'}</div>
+
+              <div>{'DC: ' + donutMetrics[1] + ' ms'}</div>
+
+              <div>{'RT: ' + donutMetrics[2] + ' ms'}</div>
+
+              <div>{'HT: ' + donutMetrics[3] + ' ms'}</div>
+            </div>
           </div>
           {port !== 0 && nameDisplay !== '' ?
             (<div className="flex">
