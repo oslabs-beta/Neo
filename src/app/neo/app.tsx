@@ -22,29 +22,30 @@ export default function App() {
   const [clearTreeOption, setClearTreeOption] = useState(false);
 
   const handleGen = async (e: any) => {
-    try {
-      const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-      );
-      type parsedDataType = Record<string, string | number>[][];
-      const data: parsedDataType = await response.json()
-      console.log(data);
-      const arr = [];
-      for (let i = 0; i < data.length; i++) {
-        for (let j = 0; j < data[i].length; j++) {
-          if (data[i][j].name === 'loadcomponents.loadcomponents') {
-            arr.push(data[i][j].duration)
-          }
-        }
-      }
-      console.log(arr);
-    } catch (error) {
-      console.log('Error', error)
-    }
+    // this is the fetch request for NEO's OpenTelemetry data
+    // try {
+    //   const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   }
+    //   );
+    //   type parsedDataType = Record<string, string | number>[][];
+    //   const data: parsedDataType = await response.json()
+    //   console.log(data);
+    //   const arr = [];
+    //   for (let i = 0; i < data.length; i++) {
+    //     for (let j = 0; j < data[i].length; j++) {
+    //       if (data[i][j].name === 'loadcomponents.loadcomponents') {
+    //         arr.push(data[i][j].duration)
+    //       }
+    //     }
+    //   }
+    //   console.log(arr);
+    // } catch (error) {
+    //   console.log('Error', error)
+    // }
     setChartVision(true);
     // setData([70, 30])
   }
@@ -200,10 +201,13 @@ export default function App() {
           console.log('appname: ', appName);
           const body = { port, endpoint: folderName };
           const res = await axios.post('/api/puppeteerHandler', body)
-          const fcpScore = parseInt(res.data.metrics.FCPScore)
-          setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [50, 0], [Math.round(res.data.metrics.FCPNum)]])
-          setScores([res.data.metrics.FCPScore])
-          setDonutColor([res.data.metrics.FCPColor])
+          const fcpScore = parseInt(res.data.metrics.FCPScore); // data[1]
+          const domScore = parseInt(res.data.metrics.domScore); // data[2]
+          const reqScore = parseInt(res.data.metrics.RequestScore); // data[3]
+          const hydScore = parseInt(res.data.metrics.HydrationScore); // data[4]
+          setData([[res.data.metrics.FCPNum, 50],[fcpScore, 100 - fcpScore], [domScore, 100 - domScore], [reqScore, 100 - reqScore], [hydScore, 100 - hydScore]])
+          setScores([(fcpScore + domScore + reqScore + hydScore) / 4, res.data.metrics.FCPScore, res.data.metrics.domScore, res.data.metrics.RequestScore, res.data.metrics.HydrationScore])
+          setDonutColor([res.data.metrics.FCPColor, res.data.metrics.FCPColor, res.data.metrics.domColor, res.data.metrics.RequestColor, res.data.metrics.HydrationColor])
           
         }
 
@@ -258,15 +262,15 @@ export default function App() {
           <div id="all-charts" hidden>
           
             <div id="overall-donut" className='flex justify-center items-center'>
-              <Donut donutData={data[0]} idx={1} donutName={'Overall Score'} csize={250} />
+              <Donut donutData={data[0]} idx={1} donutName={'Overall Score'} csize={250} overallScore={scores[0]} color={donutColor[0]}/>
             </div>
             <div id="technical-donuts" className='flex my-10'>
-              <Donut donutData={data[1]} idx={2} donutName={'First Contentful Paint'} csize={150} overallScore={scores[0]} color={donutColor[0]} />
-              <Donut donutData={data[2]} idx={3} donutName={'Indexability'} csize={150} />
-              <Donut donutData={data[1]} idx={4} donutName={'URL Quality'} csize={150} />
-              <Donut donutData={data[2]} idx={5} donutName={'Markup Validity'} csize={150} />
+              <Donut donutData={data[1]} idx={2} donutName={'First Contentful Paint'} csize={150} overallScore={scores[1]} color={donutColor[1]} />
+              <Donut donutData={data[2]} idx={3} donutName={'DOM Completion'} csize={150} overallScore={scores[2]} color={donutColor[2]}/>
+              <Donut donutData={data[3]} idx={4} donutName={'Request Time'} csize={150} overallScore={scores[3]} color={donutColor[3]}/>
+              <Donut donutData={data[4]} idx={5} donutName={'Hydration Time'} csize={150} overallScore={scores[4]} color={donutColor[4]}/>
             </div>
-            {'FCP: ' + data[3] + ' ms'}
+            {'FCP: ' + data[1] + ' ms'}
           </div>
           <div className='flex'>
             <button
