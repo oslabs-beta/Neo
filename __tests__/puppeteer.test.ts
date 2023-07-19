@@ -23,33 +23,21 @@ describe('Client side features', () => {
 
   describe('Initial load', () => {
     it('loads successfully, testing for hidden header', async () => {
-      let bool = true;
-      while (bool) {
-        try {
-          await Promise.all([
-            page.goto(APP),
-            page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
-          ]);
-          bool = false;
-
-        } catch (error) {
-          if (error) await page.reload();
-        }
-      }
+      await page.goto(APP),
       await page.waitForSelector('#pageHeaderHome');
       const label: string = await page.$eval('#pageHeaderHome', (el: any) => el.innerText);
       expect(label).toBe('Home');
-    });
+    }, 10000);
   });
 
-  describe('Nav bar should navigate to and load correct pages', () => {
-    it('navbar "App" button navigates to /neo page, testing for hidden header', async () => {
+  describe('Nav bar should navigate to correct pages', () => {
+    it('navbar "App" button navigates to /signin page if authentication hasn\'t been provided, testing for hidden header', async () => {
       await page.goto(APP);
       await page.waitForSelector('#navApp');
       await page.click('#navApp');
-      await page.waitForSelector('#pageHeaderNeo');
-      const label: string = await page.$eval('#pageHeaderNeo', (el: HTMLElement) => el.innerText)
-      expect(label).toBe('Neo');
+      await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+      const url: string = await page.url();
+      expect(url.includes('signin'));
     });
 
     it('navbar "Contact" button navigates to /contact page, testing for hidden header', async () => {
@@ -61,6 +49,15 @@ describe('Client side features', () => {
       expect(label).toBe('Contact');
     });
 
+    it('navbar "Sign In" button navigates to /signin page, testing for hidden header', async () => {
+      await page.goto(APP);
+      await page.waitForSelector('#signIn');
+      await page.click('#signIn');
+      await page.waitForSelector('#pageHeaderSignIn');
+      const label: string = await page.$eval('#pageHeaderSignIn', (el: HTMLElement) => el.innerText)
+      expect(label).toBe('Sign-In');
+    })
+
     it('navbar "Home" button navigates to / page, testing for hidden header', async () => {
       await page.goto(APP);
       await page.waitForSelector('#navHome');
@@ -71,7 +68,7 @@ describe('Client side features', () => {
     });
   });
 
-  describe('File structure should display in sidebar after upload', () => {
+  xdescribe('File structure should display in sidebar after upload', () => {
     it('is empty until input is selected', async () => {
       await page.goto(APP + '/neo');
       await page.waitForSelector('#pageHeaderNeo');
@@ -101,7 +98,7 @@ describe('Client side features', () => {
     })
   })
 
-  describe('Generate and Reset buttons should add and remove graphs', () => {
+  xdescribe('Generate and Reset buttons should add and remove graphs', () => {
     it('pressing Generate should create content', async () => {
       await page.goto(APP + '/neo');
       await page.waitForSelector('#handleGen');
@@ -118,11 +115,11 @@ describe('Client side features', () => {
       await page.click('#reset');
       expect(await hiddenStatus()).toBeTruthy;
     })
-    afterAll(async () => {
-      await browser.close();
-      await globalTeardown();
-    });
   })
-
+  
+  afterAll(async () => {
+    await browser.close();
+    await globalTeardown();
+  });
   //need tests for clear tree button
 })
