@@ -1,0 +1,18 @@
+
+FROM node:18
+
+WORKDIR /app/users-app/
+
+COPY package*.json ./
+
+COPY . /app/users-app/
+
+RUN npm i
+
+RUN npm i @vercel/otel @opentelemetry/sdk-node @opentelemetry/resources @opentelemetry/semantic-conventions @opentelemetry/sdk-trace-base @opentelemetry/exporter-trace-otlp-http
+
+RUN npm run build
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]
