@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p",
     "lint": "next lint",
     "test": "jest test --detectOpenHandles"
   },
