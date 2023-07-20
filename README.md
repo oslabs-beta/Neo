@@ -46,9 +46,9 @@ Plenty of tools offer performance metrics post-deployment, but NEO brings the sa
 
 4. Head to the App page LINK HERE
 
-5. Upload a Next.js application (We currently only support Next.js applications that use the new App router)
+5. Upload a Next.js application (**We currently only support Next.js applications that use the new App router with the src directory**)
 
-6. Click on a page directory
+6. Click on a page directory (bolded)
 
 7. Click on 'Generate' for your metrics!
 
