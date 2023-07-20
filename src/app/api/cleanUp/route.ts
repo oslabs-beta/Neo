@@ -1,20 +1,22 @@
+/* Server route for emptying uploaded file storage folders */
+
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 import { createEdgeRouter } from "next-connect";
 import * as fsX from 'fs-extra';
 
-//SETUP FOR NEXT-CONNECT ROUTER
+//setup for router
 interface RequestContext {
   params: {
     id: string;
   };
 }
 
-//NEXT-CONNECT ROUTER
+//create router
 const router = createEdgeRouter<NextRequest, RequestContext>();
 
 router
-  //FILE CLEANUP
+  //target and delete uploaded files in containing folders
   .get(async(req, event, next) => {
     console.log('in router')
     fsX.emptyDirSync('./upload/zip');

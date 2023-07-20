@@ -1,3 +1,5 @@
+/* Define Provider for authentication */
+
 'use client';
 
 import { SessionProvider } from 'next-auth/react'

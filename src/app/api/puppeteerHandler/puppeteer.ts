@@ -1,24 +1,31 @@
+/*
+Puppeteer Handler:
+  - Puppeteer Analyzer: Function that loads the port of the docker container to gain desired Metrics
+    - Puppeteer opens a headless browser and goes to desired link
+    - Gain metrics on that page
+    - Close the puppeteer headless browser and send the metrics 
+*/
+
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { algoMetrics } from '../fileUpload/algoMetrics';
 
-
 let algoMetricsResult: any;
 
-export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise<void> => {
+export const puppeteerAnalyzer = async (endpoint: string, port: number, host: string, protocol: string): Promise<void> => {
 
   try {
 
-    console.log('entered puppeteer');
+    console.log('Entered Puppeteer Analyzer');
     const browser: Browser = await puppeteer.launch({ headless: 'new' });
     const page: Page = await browser.newPage();
 
     console.log(port);
 
-    let bool = true;
+    let bool: boolean = true;
     while (bool) {
       try {
         await Promise.all([
-          page.goto(`http://localhost:${port}${endpoint}`),
+          page.goto(`${protocol}//${host}:${port}${endpoint}`),
           page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
         ]);
         bool = false;
@@ -27,27 +34,28 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
       }
     }
 
-    console.log('navigated to port')
+    console.log(`On ${protocol}//${host}:${port}${endpoint}`);
 
-    // Perform Metrics Here
-    //get entries returns an array of all performance API metrics    
+    // OBTAIN ENTRIES WITH PERFORMANCE API GET ENTRIES METHOD
     const getEntries = await page.evaluate(function (): string {
       return JSON.stringify(window.performance.getEntries());
     })
-    console.log('entries stringified')
-    //parsing the object provides the array
+
+
+    // PARSE OBJECT OF ENTRIES
     const parseEntries: { [key: string]: any } = JSON.parse(getEntries);
-    // console.log('performance metrics on user app:', parseEntries);
     const filteredEntries = parseEntries.filter((e: any) => {
       return e.entryType === 'navigation' || e.entryType === 'paint' || e.entryType === 'measure'
     });
 
+    // PRE DEFINE VARIABLES
     let resStartTime: number = 0;
     let FCP: number = 0;
     let reqTotal: number = 0;
     let hydrationTotal: number = 0;
     let domCompleteTime: number = 0
 
+    // ITERATE THROUGH FILTERED ENTRIES, PERFORM NECESSARY CALCULATIONS, AND STORE IN VARIABLES
     for (let i = 0; i < filteredEntries.length; i++) {
       if (filteredEntries[i].entryType === 'navigation') {
         resStartTime = filteredEntries[i].responseStart;
@@ -62,23 +70,21 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number): Promise
       }
     }
 
+    // ANALYZE DESIRED VARAIABLES FROM PERFORMANCE METRICS IN ALGOMETRICS
     algoMetricsResult = await algoMetrics({
-      // startTime: parseEntries[8].startTime, 
-      // responseStart: parseEntries[0].responseStart, 
-      // FCP: parseEntries[8].startTime - parseEntries[0].responseStart 
       FCP: FCP,
       RequestTime: reqTotal,
       HydrationTime: hydrationTotal,
       DOMCompletion: domCompleteTime
     });
-    console.log('from puppeteer 53 ' + algoMetricsResult)
+
     await browser.close();
 
     return algoMetricsResult;
 
   } catch (error) {
 
-    console.error('error in puppeteer middleware handler');
+    console.error('Error in Puppeteer Middleware Handler');
     console.error(error);
     throw error;
 

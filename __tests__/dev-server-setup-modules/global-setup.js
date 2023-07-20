@@ -1,4 +1,5 @@
-/* Export async function that creates an instance of nextjs dev server on port 3000 is it is not in use */
+/* Export async function globalSetup() */
+/* Creates an instance of nextjs dev server on port 3000 if it is not in use */
 
 const { setup: setupDevServer } = require("jest-dev-server");
 

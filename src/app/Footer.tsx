@@ -1,3 +1,5 @@
+/* Contents of footer displayed at all routes */
+
 import Link from "next/link";
 import Image from 'next/image'
 

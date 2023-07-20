@@ -1,3 +1,5 @@
+/* Content page for /signin route */
+
 'use client'
 
 import Link from "next/link"

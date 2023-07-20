@@ -1,3 +1,5 @@
+/* Contents of navigation bar displayed at all routes */
+
 import Link from "next/link";
 import Image from 'next/image';
 import { getServerSession } from "next-auth";;

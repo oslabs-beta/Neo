@@ -1,3 +1,5 @@
+/* Styling of display cards for /contact page */
+
 import Link from 'next/link';
 import Image from 'next/image';
 
