@@ -12,17 +12,18 @@ export default async function Home() {
         <p className='text-3xl'>Next</p>
         <p className='text-3xl'>Engine</p>
         <p className='text-3xl'>Optimization</p>
-        <button className='bg-slate-400 text-black w-30 flex flex-row gap-1 justify-between items-center py-2 px-3 rounded-full'>
-          <Image className='mr-1' src="/play-button.png" width={20} height={20} alt="Play button Icon for App button" />
+        <Link href={'/neo'} className='bg-slate-400 text-xl text-black w-30 flex flex-row gap-1 justify-around items-center py-2 px-3 rounded-full mt-5'>
+          <Image className='mr-1' src="/play-button.png" width={30} height={30} alt="Play button Icon for App button" />
           Application
-        </button>
+        </Link>
       </div>
-      <div>
+      <div >
         <Image
-          src="/App-Preview.png"
-          width={600}
-          height={600}
+          className='rounded-3xl'
+          src="/NeoDemo2FastGif.gif"
           priority={true}
+          height={600}
+          width={600}
           alt="Preview of NEO Dashboard"
         />
       </div>
