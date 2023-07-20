@@ -51,9 +51,17 @@ Plenty of tools offer performance metrics post-deployment, but NEO brings the sa
 
 5. Upload a Next.js application (**We currently only support Next.js applications that use the new App router with the src directory**)
 
+<p align="center" >
+    <img src="./public/NeoUploadFastGif.gif" alt="NEO-Upload" width=800px>
+</p>
+
 6. Click on a page directory (bolded)
 
 7. Click on 'Generate' for your metrics!
+
+<p align="center" >
+    <img src="./public/NeoSelection.gif" alt="NEO-Selection" width=800px>
+</p>
 
 ## Contributors
 
