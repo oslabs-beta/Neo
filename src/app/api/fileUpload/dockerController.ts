@@ -1,6 +1,12 @@
+/* 
+Docker Controller contains functions for:
+  - Add Files: Creating Dockerfile and Docker Ignore in Users App
+  - Build and Run: Stopping any previous instance of Docker Container, Creating Image, and Running a Container, and setting a stop terminal command to close and remove the container and image after 15 minutes
+*/
+
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import fs from 'fs'
+import fs from 'fs';
 const execSync = promisify(exec);
 
 export const dockerFuncs = {
@@ -15,16 +21,15 @@ export const dockerFuncs = {
       fs.cp('.dockerignore', `${newAppPath}/.dockerignore`, err => {
         if (err) console.log('error while adding Dockerfile: ', err);
       })
-
+      // COPYING THE DEFAULT VERCEL INSTRUMENTATION SCRIPT INTO THE CONTAINER
+      // For devs: we were trying to set up OpenTelemetry in the user containers so that we could retreive metrics at a componenet level
       fs.cp('src/instrumentation.ts', `${newAppPath}/src/instrumentation.ts`, err => {
         if (err) console.log('error while adding Dockerfile: ', err);
       })
 
-      console.log('Added Dockerfile, .dockerignore, and instrumentation for OTel')
-
     } catch (error) {
-      console.error('error in docker add files middleware handler')
-      console.error(error)
+      console.error('error in docker add files middleware handler');
+      console.error(error);
     }
 
   },
@@ -50,10 +55,7 @@ export const dockerFuncs = {
       throw error;
     }
 
-    console.log('Finished building the image and deploying the container!');
-    console.log('Deployed at port ' + port);
-
-    // stop after certain period of time
+    // Stop after 15 minutes (900 seconds)
     const dockerStop: string = `sleep 900 && docker stop ${name} && docker rmi ${appname} &`;
     exec(dockerStop, (error, stdout, stderr) => {
       if (error) {

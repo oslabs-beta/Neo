@@ -1,13 +1,15 @@
+/* Content for /neo landing page */
+
 'use client';
 import { useState, useEffect, Dispatch, useRef } from 'react';
 import Donut from './donut';
-import DoughnutChart from './donut';
+// import DoughnutChart from './donut';
 import axios from 'axios';
 import JSZip from 'jszip';
 import Input from './input';
 import { useSession } from 'next-auth/react';
 import ClearTree from './clear-tree';
-import { Overlock } from 'next/font/google';
+// import { Overlock } from 'next/font/google';
 
 export default function App() {
   const [data, setData] = useState([[], [50, 50]]);
@@ -26,7 +28,9 @@ export default function App() {
   const [clearTreeOption, setClearTreeOption] = useState(false);
 
   const handleGen = async (e: any) => {
-    // this is the fetch request for NEO's OpenTelemetry data
+    /* Otel foundation code */
+    // this is the fetch request for NEO's OpenTelemetry data : It makes a request to the zipkin API, but you can use Jaeger or Prometheus
+    // uncommment and then head to the endpoint for your collector of choice, load up the application and you can receive your metrics
     // try {
     //   const response: Response = await fetch('http://localhost:9411/api/v2/traces?serviceName=next-app&spanName=loadcomponents.loadcomponents&limit=10', {
     //     method: 'GET',
@@ -51,7 +55,6 @@ export default function App() {
     //   console.log('Error', error)
     // }
     setChartVision(true);
-    // setData([70, 30])
   };
 
   useEffect(() => {
@@ -63,11 +66,12 @@ export default function App() {
     }
   }, [chartVision]);
 
+  //function ran when clicking clear tree button
   async function removeFiles(event: any) {
     setClearTreeOption(false);
     setFileStructure([]);
     await axios
-      .get('http://localhost:3000/api/cleanUp')
+      .get('/api/cleanUp')
       .then((res) => console.log(res))
       .catch((err) => console.error(err));
   }
@@ -76,12 +80,14 @@ export default function App() {
 
   //FILE ZIP FUNCTION TO RUN ONCHANGE
   async function createZip(event: any) {
+    //disable input button
     setInputOption(false);
     const newFileStructure: Array<FileItem> = [];
     const files: any = event.target.files;
     const zip = new JSZip();
     //packet all the files
     setUpdateMessage('Zipping Files');
+    //iterate over loaded files and constuct zip file for server and display tree for /neo sidebar
     for (const file of files) {
       //Conditional ignore for zip file
       if (
@@ -148,14 +154,10 @@ export default function App() {
           lastModified: file.lastModified,
           path: filePath,
         });
-        //File test
-        // console.log(file);
       }
     }
-    //Create styling
     //convert to blob
     const blobZip = await zip.generateAsync({ type: 'blob' });
-    // console.log('check blobZip: ', blobZip);
     //send blob to server
     setUpdateMessage('Sending Files to Server');
     await axios
@@ -183,7 +185,7 @@ export default function App() {
   }, [port]);
 
   // END OF CREATE ZIP FUNCTION
-
+  // Create FileItems and Folders for rendering in the side-bar after upload
   type FileItem = {
     name: string;
     type: 'file' | 'folder';
@@ -219,15 +221,21 @@ export default function App() {
           console.log(folderName);
 
           console.log('appname: ', appName);
-          const body = { port, endpoint: folderName };
+          const body = { 
+            port, 
+            endpoint: folderName, 
+            host: window.location.hostname, 
+            protocol: window.location.protocol
+          };
           const res = await axios.post('/api/puppeteerHandler', body);
+          // following the axios post, we now have our metrics object client side through the response
           const fcpScore = parseInt(res.data.metrics.FCPScore); // data[1]
           const domScore = parseInt(res.data.metrics.domScore); // data[2]
           const reqScore = parseInt(res.data.metrics.RequestScore); // data[3]
           const hydScore = parseInt(res.data.metrics.HydrationScore); // data[4]
           
           console.log('metrics: ', res.data.metrics);
-
+          // preparing the overall score to be displayed as an average of the four provided scores
           let overall = 0;
           let count = 0;
           if (hydScore) {
@@ -247,6 +255,7 @@ export default function App() {
             overall += reqScore;
           }
           const overallScore = overall / count;
+          // setter functions to apply all of the prepared scores
           setData([
             [overallScore, 100 - overallScore],
             [fcpScore, 100 - fcpScore],
@@ -261,6 +270,7 @@ export default function App() {
             res.data.metrics.RequestScore,
             res.data.metrics.HydrationScore,
           ]);
+          // preparing the color for the overall donut, because it is not accounted for in algometrics
           let overallColor = 'green';
           if (overallScore < 70 && overallScore > 50) {
             overallColor = 'yellow';
@@ -319,7 +329,7 @@ export default function App() {
     <div id="content" className="bg-gray-300 rounded-3xl">
       <div id="app-header" className="flex justify-between">
         <p className="text-3xl text-black ml-10">Dashboard</p>
-        {/* <button className="bg-black rounded-md p-2 mr-10">Upload File</button> */}
+        
         <Input
           createZip={createZip}
           inputOption={inputOption}
@@ -337,9 +347,6 @@ export default function App() {
             clearTreeOption={clearTreeOption}
           />
           {fileStructure && <FileItem item={fileStructure} onClick={func} />}
-          {/* <button className="bg-black rounded-md p-2 text-white">
-            Add Folder
-          </button> */}
         </div>
         <div id="app-body_line" className="bg-black"></div>
         <div

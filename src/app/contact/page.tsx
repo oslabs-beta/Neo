@@ -1,3 +1,5 @@
+/* /contact landing page that displays creater contact cards */
+
 import Link from 'next/link';
 import Card from './card';
 
@@ -24,7 +26,7 @@ export default function Contact() {
     'https://www.linkedin.com/in/niteshsunku/',
     'https://www.linkedin.com/in/donald-twiford-13731a118/',
     'https://www.linkedin.com/in/bensonzhen/',
-git   ];
+  ];
 
   const githubUrls: string[] = [
     'https://github.com/nguyentomt',

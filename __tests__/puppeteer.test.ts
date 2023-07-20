@@ -1,8 +1,12 @@
+/* Testing Suite built around puppeteer */
+/* Uses a test application built in NextJS named 'bboy-blog' constructed by Tom Nguyen @ https://github.com/nguyentomt */
+
 import puppeteer from "puppeteer";
 import * as fsX from 'fs-extra';
 import globalSetup from './dev-server-setup-modules/global-setup';
 import globalTeardown from './dev-server-setup-modules/global-teardown';
 
+//variables for test paths
 const APP = `http://localhost:3000`;
 const zipStorage = './upload/zip';
 const unzipStorage = './upload/unzip';
@@ -12,10 +16,12 @@ describe('Client side features', () => {
   let browser: any;
   let page: any;
 
+  //start server and prepare a puppeteer page for navigation
   beforeAll(async () => {
     await globalSetup();
     browser = await puppeteer.launch({ headless: 'new' });
     page = await browser.newPage();
+    //ensure storage files on server are empty
     fsX.emptyDirSync(zipStorage);
     fsX.emptyDirSync(unzipStorage);
   });
@@ -68,6 +74,8 @@ describe('Client side features', () => {
     });
   });
 
+  //Following tests skipped until dummy login test is implemented
+
   xdescribe('File structure should display in sidebar after upload', () => {
     it('is empty until input is selected', async () => {
       await page.goto(APP + '/neo');
@@ -117,9 +125,18 @@ describe('Client side features', () => {
     })
   })
   
+  //close puppeteer browser and shut down server if loaded
   afterAll(async () => {
     await browser.close();
     await globalTeardown();
   });
-  //need tests for clear tree button
 })
+
+/*
+Future testing suites:
+- Create a dummy login to simulate authentication
+- Check server pathways
+- Check Generate and Reset button functionality
+- Check chart functionality
+- Test contact links
+*/

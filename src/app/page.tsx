@@ -1,3 +1,5 @@
+/* Layout for /home path */
+
 import Image from 'next/image';
 import Link from 'next/link';
 

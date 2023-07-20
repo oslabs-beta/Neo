@@ -1,3 +1,10 @@
+/* 
+File Upload API Connection:
+  - Clears Upload Directory and Uploads New File as a Zip
+  - Creates Docker Image and Runs Docker Container
+  - Assigns Docker Container Port to User based on Credentials 
+*/
+
 import { NextResponse, NextRequest } from 'next/server'
 import { createEdgeRouter } from "next-connect";
 import decompress from 'decompress';
@@ -12,17 +19,16 @@ interface RequestContext {
   params: {
     id: string;
   };
-}
+};
 
 // EXTEND NEXT-REQUEST TO TAKE A LOCALS OBJECT FOR DATA PASSING
 interface ExtraNextReq extends NextRequest {
   locals: {
     [key: string]: unknown; // use like res.locals, now req.locals
   }
-}
+};
 
 const ports: number[] = [9090, 16686, 14268, 14250, 9411, 1888, 8888, 8889, 13133, 4317, 4318, 55679];
-const portsCopy: number[] = [...ports]; // save original copy for reset
 
 //NEXT-CONNECT ROUTER
 const router = createEdgeRouter<ExtraNextReq, RequestContext>();
@@ -37,9 +43,9 @@ router
 
   //CREATE ZIP
   .post(async (req, event, next) => {
-    const blobZip = await req.blob();
-    const fileBuffer: any = await blobZip.arrayBuffer();
-    const data = new DataView(fileBuffer);
+    const blobZip: Blob = await req.blob();
+    const fileBuffer: ArrayBuffer = await blobZip.arrayBuffer();
+    const data: DataView = new DataView(fileBuffer);
     fs.writeFileSync('upload/zip/files.zip', data);
     return next();
   })
@@ -57,8 +63,8 @@ router
     req.locals.appname = fs.readdirSync('upload/unzip')[0].toLowerCase();
 
     // save users name
-    const searchParams = new URL(req.url).searchParams;
-    const email = new URLSearchParams(searchParams).get('email');
+    const searchParams: URLSearchParams = new URL(req.url).searchParams;
+    const email: string | null = new URLSearchParams(searchParams).get('email');
     req.locals.email = email;
 
     return next();
@@ -96,15 +102,13 @@ router
     // assign port name and save to memory
     const port: number = ports[ports.length - 1];
     req.locals.port = port;
-    console.log('ports array: ', ports);
-    console.log('new port: ', port);
 
     await BuildAndRun(req.locals);
 
     return next()
   })
 
-  // update database with port
+  // UPDATE DATABASE WITH USER'S PORT
   .post(async (req, event, next) => {
 
     const { email, port } = req.locals;
@@ -120,8 +124,7 @@ router
       RETURNING *
       `;
 
-      const response = await dbClient?.query(updatePort, [port, email]);
-      console.log('response after update', response?.rows[0]);
+      await dbClient?.query(updatePort, [port, email]);
 
     } catch (error) {
       throw new Error('Error Updating database with User and Port')

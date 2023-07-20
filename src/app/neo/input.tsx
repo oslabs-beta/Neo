@@ -1,9 +1,12 @@
+/* Component for toggling gisplay of input button */
+
 type inputProps = {
   createZip: (event: any) => void;
   inputOption: boolean;
   updateMessage: string;
 }
 
+//switch based on inputOption state from /neo/inputOption
 export default function Input ({ createZip, inputOption, updateMessage }: inputProps) {
 
   if(inputOption) {

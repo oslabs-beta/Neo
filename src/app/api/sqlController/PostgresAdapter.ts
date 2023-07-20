@@ -1,3 +1,9 @@
+/* 
+Postgres Adapter for Next Auth:
+  - All Functions relevant for storing User and Account information in SQL DB
+*/
+
+
 import { Pool } from "pg";
 import { Account } from "next-auth";
 import {

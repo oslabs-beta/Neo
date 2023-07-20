@@ -1,4 +1,5 @@
-// 'use client';
+//layout for /neo page
+
 import App from "./app";
 
 export default async function Neo() {
