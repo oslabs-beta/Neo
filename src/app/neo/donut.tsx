@@ -1,3 +1,5 @@
+/* Styling component for donut charts */
+
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
@@ -24,7 +26,6 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
 
       const donutLabel = {
         id: 'doughnutLabel',
-        // beforeDatasetsDraw(chart: Chart, args: any, pluginOptions: any) {
         beforeDatasetsDraw(chart: Chart) {
           const { ctx, data } = chart;
           ctx.save();
@@ -40,7 +41,6 @@ export default function Donut({ donutData, idx, donutName, csize, overallScore, 
       const myChart = new Chart(chartRef, {
         type: 'doughnut',
         data: {
-          // label: 'Overall',
           datasets: [
             {
               data: [70, 30],

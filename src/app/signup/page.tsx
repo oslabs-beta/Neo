@@ -1,3 +1,5 @@
+/* content page for /signup path */
+
 'use client'
 
 import axios from "axios";

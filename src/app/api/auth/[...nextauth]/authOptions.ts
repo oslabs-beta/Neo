@@ -1,3 +1,6 @@
+/* Auth Set-Up and Imports*/
+/*  */
+
 import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -7,12 +10,14 @@ import PostgresAdapter from "../../sqlController/PostgresAdapter";
 import connectToDatabase from "../../sqlController/sql";
 import bcrypt from 'bcrypt';
 
+// Connecting to PostgreSQL Database
 const pg_URI = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString: pg_URI
 })
 
+// Auth Options defines the forms of Credentials: Email and Password + OAuth
 export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
@@ -24,6 +29,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
 
+        // authorization via database check and bcrypt
         const { dbClient, dbRelease } = await connectToDatabase();
 
         try {
@@ -64,6 +70,7 @@ export const authOptions: NextAuthOptions = {
 
       }
     }),
+    // Github Provider not set up
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
@@ -86,8 +93,8 @@ export const authOptions: NextAuthOptions = {
     maxAge: 15 * 60
   },
   debug: process.env.NODE_ENV === 'development',
-  adapter: PostgresAdapter(pool),
-  pages: {
+  adapter: PostgresAdapter(pool), // connecting to custom adapter that connects auth to DB
+  pages: { // manually set routes to created pages (sign in and sign up)
     signIn: '/signin',
     newUser: '/signup'
   }

@@ -1,3 +1,8 @@
+/*
+SET UP SQL SCRIPT:
+  - All tables necessary for storage in a Postgres Database
+*/
+
 
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

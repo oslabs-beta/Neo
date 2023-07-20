@@ -1,3 +1,9 @@
+/* 
+SQL Controller:
+  - Creates the connection to SQL Database
+  - Establishes Client for Querying and Release for Ending Connection
+*/
+
 import { Pool, PoolClient } from 'pg';
 
 const pg_URI = 'postgres://gymssbhl:nN2Eg1LZKQ-liUJdig1ZIgVNQTJ_5kvc@mahmud.db.elephantsql.com/gymssbhl';
@@ -19,8 +25,8 @@ export default async function connectToDatabase() {
     const client = await pool.connect();
     console.log('Connected!');
 
-    dbFuncs.dbClient = client; // persists connection through middleware
-    dbFuncs.dbRelease = () => client.release(); // ends connection
+    dbFuncs.dbClient = client; // PERSISTS CONNECTION THROUGH MIDDLEWARE
+    dbFuncs.dbRelease = () => client.release(); // ENDS CONNECTION
 
     return dbFuncs;
 

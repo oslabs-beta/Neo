@@ -1,3 +1,10 @@
+/* 
+Sign Up API Route:
+  - Sign Up for Users w/ Email and Password
+  - Connects to SQL Database to store information
+  - Encrypts password for storage via Bcrypt
+*/
+
 import bcrypt from 'bcrypt';
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '../sqlController/sql';
@@ -15,7 +22,7 @@ export async function POST(request: NextRequest) {
       return new NextResponse('Missing Fields', { status: 400 });
     }
 
-    // check if in database
+    // CHECK IN DATABASE
     const checkUser = `
     SELECT * FROM users
     WHERE users.email = $1
@@ -27,10 +34,10 @@ export async function POST(request: NextRequest) {
       return new NextResponse('Account already exists', { status: 401 });
     }
 
-    // hash the password for security
+    // HASH PASSWORD FOR SECURITY
     const hashPass = await bcrypt.hash(password, 10);
 
-    // create user in database with hashed password
+    // CREATE USER IN DB WITH HASHED PASSWORD
     const addUser = `
     INSERT INTO users (name, email, password)
     VALUES ($1, $2, $3)
@@ -40,8 +47,6 @@ export async function POST(request: NextRequest) {
     const addResponse = await dbClient?.query(addUser, [name, email, hashPass]);
 
     if (addResponse) {
-
-      console.log('addresponse: ', addResponse)
       return NextResponse.json(addResponse.rows[0], { status: 200 });
     }
 
@@ -49,10 +54,10 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
 
-    console.error('Error in sign up')
+    console.error('Error in sign up');
     console.error(error);
 
-    return NextResponse.json({ Error: error }, { status: 500 })
+    return NextResponse.json({ Error: error }, { status: 500 });
 
   } finally {
     if (dbClient && dbRelease) dbRelease();
