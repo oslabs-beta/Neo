@@ -2,6 +2,7 @@
 export function algoMetrics(metrics: any) {
   const metricsObj: any = {};
 
+
   const obj: any = {
     0: '100', 100: '100', 200: '98', 300: '96', 400: '94', 500: '92', 600: '90', 700: '88', 800: '86', 900: '84', 1000: '82',
     1100: '80', 1200: '78', 1300: '76', 1400: '74', 1500: '72', 1600: '70', 1700: '68', 1800: '66', 1900: '64', 2000: '62',
@@ -91,32 +92,6 @@ export function algoMetrics(metrics: any) {
     metricsObj.domColor = 'red';
   }
 
-<<<<<<< HEAD
-//Hydration Metrics
-if (metrics.HydrationTime <= 10) {
-  console.log('in less than 10')
-  metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
-  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-  let hydrationRoundScore = Math.round(metrics.HydrationTime) 
-  metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-  metricsObj.HydrationColor = 'green'
-}
-else if (metrics.HydrationTime <= 24) {
-  console.log('in less than 24')
-  metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: average';
-  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-  let hydrationRoundScore = Math.round(metrics.HydrationTime) 
-  metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-  metricsObj.HydrationColor = 'yellow'
-} else {
-  console.log('in over 24')
-  metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: bad';
-  metricsObj.HydrationNum = Math.round(metrics.HydrationTime * 100) / 100;
-  let hydrationRoundScore = Math.round(metrics.HydrationTime) 
-  metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
-  metricsObj.HydrationColor = 'red'
-}
-=======
   //Hydration Metrics
   if (metrics.HydrationTime <= 10) {
     metricsObj.Hydration = 'Hydration Time: ' + metrics.HydrationTime + ' rating: good';
@@ -138,7 +113,6 @@ else if (metrics.HydrationTime <= 24) {
     metricsObj.HydrationScore = hydrationObj[hydrationRoundScore];
     metricsObj.HydrationColor = 'red'
   }
->>>>>>> a05763f6c9d2265f3e46fbcdb2b12838208465a1
 
   console.log(metricsObj);
   return metricsObj;
