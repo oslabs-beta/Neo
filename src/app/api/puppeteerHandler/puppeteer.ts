@@ -25,7 +25,7 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number, host: st
     while (bool) {
       try {
         await Promise.all([
-          page.goto(`${protocol}//${host}:${port}${endpoint}`),
+          page.goto(`http://${host}:${port}${endpoint}`),
           page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
         ]);
         bool = false;
