@@ -12,10 +12,10 @@ export default async function Home() {
         <p className='text-3xl'>Next</p>
         <p className='text-3xl'>Engine</p>
         <p className='text-3xl'>Optimization</p>
-        <button className='bg-slate-400 text-black w-30 flex flex-row gap-1 justify-between items-center py-2 px-3 rounded-full'>
+        <Link href="/neo" className="hover:no-underline"><button className='bg-slate-400 text-black w-30 flex flex-row gap-1 justify-between items-center py-2 px-3 rounded-full'>
           <Image className='mr-1' src="/play-button.png" width={20} height={20} alt="Play button Icon for App button" />
           Application
-        </button>
+        </button></Link>
       </div>
       <div>
         <Image
