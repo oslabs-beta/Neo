@@ -20,8 +20,10 @@ export default async function Home() {
       <div>
         <Image
           src="/App-Preview.png"
+          objectFit="cover"
           width={600}
           height={600}
+          className="object-cover"
           priority={true}
           alt="Preview of NEO Dashboard"
         />

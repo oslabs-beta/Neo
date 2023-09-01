@@ -44,6 +44,9 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number, host: st
 
     // PARSE OBJECT OF ENTRIES
     const parseEntries: { [key: string]: any } = JSON.parse(getEntries);
+    // Uncomment below to see unfiltered metrics in backend terminal
+    // console.log('All metrics from Puppeteer: ', parseEntries)
+
     const filteredEntries = parseEntries.filter((e: any) => {
       return e.entryType === 'navigation' || e.entryType === 'paint' || e.entryType === 'measure'
     });
@@ -66,7 +69,7 @@ export const puppeteerAnalyzer = async (endpoint: string, port: number, host: st
         FCP = filteredEntries[i].startTime - resStartTime;
       }
       if (filteredEntries[i].name === 'Next.js-hydration') {
-        hydrationTotal = filteredEntries[i].duration
+        hydrationTotal = filteredEntries[i].duration // + filteredEntries[i].startTime;
       }
     }
 
